@@ -1,0 +1,110 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.JobEvaluationMapper">
+    
+    <resultMap type="JobEvaluation" id="JobEvaluationResult">
+        <result property="evaluationId"    column="evaluation_id"    />
+        <result property="applicationId"    column="application_id"    />
+        <result property="postId"    column="post_id"    />
+        <result property="studentId"    column="student_id"    />
+        <result property="enterpriseId"    column="enterprise_id"    />
+        <result property="evaluationType"    column="evaluation_type"    />
+        <result property="score"    column="score"    />
+        <result property="content"    column="content"    />
+        <result property="evaluationTime"    column="evaluation_time"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="remark"    column="remark"    />
+        <result property="delFlag"    column="del_flag"    />
+    </resultMap>
+
+    <sql id="selectJobEvaluationVo">
+        select evaluation_id, application_id, post_id, student_id, enterprise_id, evaluation_type, score, content, evaluation_time, create_by, create_time, update_by, update_time, remark, del_flag from t_job_evaluation
+    </sql>
+
+    <select id="selectJobEvaluationList" parameterType="JobEvaluation" resultMap="JobEvaluationResult">
+        <include refid="selectJobEvaluationVo"/>
+        <where>  
+            <if test="applicationId != null "> and application_id = #{applicationId}</if>
+            <if test="evaluationType != null  and evaluationType != ''"> and evaluation_type = #{evaluationType}</if>
+            <if test="params.beginEvaluationTime != null and params.beginEvaluationTime != '' and params.endEvaluationTime != null and params.endEvaluationTime != ''"> and evaluation_time between #{params.beginEvaluationTime} and #{params.endEvaluationTime}</if>
+        </where>
+    </select>
+    
+    <select id="selectJobEvaluationByEvaluationId" parameterType="Long" resultMap="JobEvaluationResult">
+        <include refid="selectJobEvaluationVo"/>
+        where evaluation_id = #{evaluationId}
+    </select>
+
+    <insert id="insertJobEvaluation" parameterType="JobEvaluation" useGeneratedKeys="true" keyProperty="evaluationId">
+        insert into t_job_evaluation
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="applicationId != null">application_id,</if>
+            <if test="postId != null">post_id,</if>
+            <if test="studentId != null">student_id,</if>
+            <if test="enterpriseId != null">enterprise_id,</if>
+            <if test="evaluationType != null">evaluation_type,</if>
+            <if test="score != null">score,</if>
+            <if test="content != null and content != ''">content,</if>
+            <if test="evaluationTime != null">evaluation_time,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="remark != null">remark,</if>
+            <if test="delFlag != null">del_flag,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="applicationId != null">#{applicationId},</if>
+            <if test="postId != null">#{postId},</if>
+            <if test="studentId != null">#{studentId},</if>
+            <if test="enterpriseId != null">#{enterpriseId},</if>
+            <if test="evaluationType != null">#{evaluationType},</if>
+            <if test="score != null">#{score},</if>
+            <if test="content != null and content != ''">#{content},</if>
+            <if test="evaluationTime != null">#{evaluationTime},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="remark != null">#{remark},</if>
+            <if test="delFlag != null">#{delFlag},</if>
+         </trim>
+    </insert>
+
+    <update id="updateJobEvaluation" parameterType="JobEvaluation">
+        update t_job_evaluation
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="applicationId != null">application_id = #{applicationId},</if>
+            <if test="postId != null">post_id = #{postId},</if>
+            <if test="studentId != null">student_id = #{studentId},</if>
+            <if test="enterpriseId != null">enterprise_id = #{enterpriseId},</if>
+            <if test="evaluationType != null">evaluation_type = #{evaluationType},</if>
+            <if test="score != null">score = #{score},</if>
+            <if test="content != null and content != ''">content = #{content},</if>
+            <if test="evaluationTime != null">evaluation_time = #{evaluationTime},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="delFlag != null">del_flag = #{delFlag},</if>
+        </trim>
+        where evaluation_id = #{evaluationId}
+    </update>
+
+    <delete id="deleteJobEvaluationByEvaluationId" parameterType="Long">
+        delete from t_job_evaluation where evaluation_id = #{evaluationId}
+    </delete>
+
+    <delete id="deleteJobEvaluationByEvaluationIds" parameterType="String">
+        delete from t_job_evaluation where evaluation_id in 
+        <foreach item="evaluationId" collection="array" open="(" separator="," close=")">
+            #{evaluationId}
+        </foreach>
+    </delete>
+</mapper>

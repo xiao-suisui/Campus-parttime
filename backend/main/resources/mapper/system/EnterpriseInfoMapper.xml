@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.EnterpriseInfoMapper">
+    
+    <resultMap type="EnterpriseInfo" id="EnterpriseInfoResult">
+        <result property="enterpriseId"    column="enterprise_id"    />
+        <result property="enterpriseName"    column="enterprise_name"    />
+        <result property="unifiedCode"    column="unified_code"    />
+        <result property="legalPerson"    column="legal_person"    />
+        <result property="contactName"    column="contact_name"    />
+        <result property="contactPhone"    column="contact_phone"    />
+        <result property="licenseUrl"    column="license_url"    />
+        <result property="intro"    column="intro"    />
+        <result property="auditStatus"    column="audit_status"    />
+        <result property="auditReason"    column="audit_reason"    />
+        <result property="auditBy"    column="audit_by"    />
+        <result property="auditTime"    column="audit_time"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="remark"    column="remark"    />
+        <result property="delFlag"    column="del_flag"    />
+    </resultMap>
+
+    <sql id="selectEnterpriseInfoVo">
+        select enterprise_id, enterprise_name, unified_code, legal_person, contact_name, contact_phone, license_url, intro, audit_status, audit_reason, audit_by, audit_time, create_by, create_time, update_by, update_time, remark, del_flag from t_enterprise_info
+    </sql>
+
+    <select id="selectEnterpriseInfoList" parameterType="EnterpriseInfo" resultMap="EnterpriseInfoResult">
+        <include refid="selectEnterpriseInfoVo"/>
+        <where>  
+            <if test="enterpriseName != null  and enterpriseName != ''"> and enterprise_name like concat('%', #{enterpriseName}, '%')</if>
+            <if test="unifiedCode != null  and unifiedCode != ''"> and unified_code = #{unifiedCode}</if>
+            <if test="contactPhone != null  and contactPhone != ''"> and contact_phone = #{contactPhone}</if>
+            <if test="licenseUrl != null  and licenseUrl != ''"> and license_url = #{licenseUrl}</if>
+            <if test="intro != null  and intro != ''"> and intro = #{intro}</if>
+            <if test="auditStatus != null  and auditStatus != ''"> and audit_status = #{auditStatus}</if>
+            <if test="auditReason != null  and auditReason != ''"> and audit_reason = #{auditReason}</if>
+        </where>
+    </select>
+    
+    <select id="selectEnterpriseInfoByEnterpriseId" parameterType="Long" resultMap="EnterpriseInfoResult">
+        <include refid="selectEnterpriseInfoVo"/>
+        where enterprise_id = #{enterpriseId}
+    </select>
+
+    <insert id="insertEnterpriseInfo" parameterType="EnterpriseInfo">
+        insert into t_enterprise_info
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="enterpriseId != null">enterprise_id,</if>
+            <if test="enterpriseName != null and enterpriseName != ''">enterprise_name,</if>
+            <if test="unifiedCode != null and unifiedCode != ''">unified_code,</if>
+            <if test="legalPerson != null">legal_person,</if>
+            <if test="contactName != null and contactName != ''">contact_name,</if>
+            <if test="contactPhone != null and contactPhone != ''">contact_phone,</if>
+            <if test="licenseUrl != null and licenseUrl != ''">license_url,</if>
+            <if test="intro != null">intro,</if>
+            <if test="auditStatus != null">audit_status,</if>
+            <if test="auditReason != null">audit_reason,</if>
+            <if test="auditBy != null">audit_by,</if>
+            <if test="auditTime != null">audit_time,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="remark != null">remark,</if>
+            <if test="delFlag != null">del_flag,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="enterpriseId != null">#{enterpriseId},</if>
+            <if test="enterpriseName != null and enterpriseName != ''">#{enterpriseName},</if>
+            <if test="unifiedCode != null and unifiedCode != ''">#{unifiedCode},</if>
+            <if test="legalPerson != null">#{legalPerson},</if>
+            <if test="contactName != null and contactName != ''">#{contactName},</if>
+            <if test="contactPhone != null and contactPhone != ''">#{contactPhone},</if>
+            <if test="licenseUrl != null and licenseUrl != ''">#{licenseUrl},</if>
+            <if test="intro != null">#{intro},</if>
+            <if test="auditStatus != null">#{auditStatus},</if>
+            <if test="auditReason != null">#{auditReason},</if>
+            <if test="auditBy != null">#{auditBy},</if>
+            <if test="auditTime != null">#{auditTime},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="remark != null">#{remark},</if>
+            <if test="delFlag != null">#{delFlag},</if>
+         </trim>
+    </insert>
+
+    <update id="updateEnterpriseInfo" parameterType="EnterpriseInfo">
+        update t_enterprise_info
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="enterpriseName != null and enterpriseName != ''">enterprise_name = #{enterpriseName},</if>
+            <if test="unifiedCode != null and unifiedCode != ''">unified_code = #{unifiedCode},</if>
+            <if test="legalPerson != null">legal_person = #{legalPerson},</if>
+            <if test="contactName != null and contactName != ''">contact_name = #{contactName},</if>
+            <if test="contactPhone != null and contactPhone != ''">contact_phone = #{contactPhone},</if>
+            <if test="licenseUrl != null and licenseUrl != ''">license_url = #{licenseUrl},</if>
+            <if test="intro != null">intro = #{intro},</if>
+            <if test="auditStatus != null">audit_status = #{auditStatus},</if>
+            <if test="auditReason != null">audit_reason = #{auditReason},</if>
+            <if test="auditBy != null">audit_by = #{auditBy},</if>
+            <if test="auditTime != null">audit_time = #{auditTime},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="delFlag != null">del_flag = #{delFlag},</if>
+        </trim>
+        where enterprise_id = #{enterpriseId}
+    </update>
+
+    <delete id="deleteEnterpriseInfoByEnterpriseId" parameterType="Long">
+        delete from t_enterprise_info where enterprise_id = #{enterpriseId}
+    </delete>
+
+    <delete id="deleteEnterpriseInfoByEnterpriseIds" parameterType="String">
+        delete from t_enterprise_info where enterprise_id in 
+        <foreach item="enterpriseId" collection="array" open="(" separator="," close=")">
+            #{enterpriseId}
+        </foreach>
+    </delete>
+</mapper>

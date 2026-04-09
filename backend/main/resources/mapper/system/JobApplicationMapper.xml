@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.JobApplicationMapper">
+    
+    <resultMap type="JobApplication" id="JobApplicationResult">
+        <result property="applicationId"    column="application_id"    />
+        <result property="postId"    column="post_id"    />
+        <result property="studentId"    column="student_id"    />
+        <result property="resumeId"    column="resume_id"    />
+        <result property="applyTime"    column="apply_time"    />
+        <result property="applicationStatus"    column="application_status"    />
+        <result property="processTime"    column="process_time"    />
+        <result property="enterpriseRemark"    column="enterprise_remark"    />
+        <result property="completeTime"    column="complete_time"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="remark"    column="remark"    />
+        <result property="delFlag"    column="del_flag"    />
+    </resultMap>
+
+    <sql id="selectJobApplicationVo">
+        select application_id, post_id, student_id, resume_id, apply_time, application_status, process_time, enterprise_remark, complete_time, create_by, create_time, update_by, update_time, remark, del_flag from t_job_application
+    </sql>
+
+    <select id="selectJobApplicationList" parameterType="JobApplication" resultMap="JobApplicationResult">
+        <include refid="selectJobApplicationVo"/>
+        <where>  
+            <if test="postId != null "> and post_id = #{postId}</if>
+            <if test="studentId != null "> and student_id = #{studentId}</if>
+            <if test="params.beginApplyTime != null and params.beginApplyTime != '' and params.endApplyTime != null and params.endApplyTime != ''"> and apply_time between #{params.beginApplyTime} and #{params.endApplyTime}</if>
+            <if test="applicationStatus != null  and applicationStatus != ''"> and application_status = #{applicationStatus}</if>
+        </where>
+    </select>
+    
+    <select id="selectJobApplicationByApplicationId" parameterType="Long" resultMap="JobApplicationResult">
+        <include refid="selectJobApplicationVo"/>
+        where application_id = #{applicationId}
+    </select>
+
+    <insert id="insertJobApplication" parameterType="JobApplication" useGeneratedKeys="true" keyProperty="applicationId">
+        insert into t_job_application
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="postId != null">post_id,</if>
+            <if test="studentId != null">student_id,</if>
+            <if test="resumeId != null">resume_id,</if>
+            <if test="applyTime != null">apply_time,</if>
+            <if test="applicationStatus != null">application_status,</if>
+            <if test="processTime != null">process_time,</if>
+            <if test="enterpriseRemark != null">enterprise_remark,</if>
+            <if test="completeTime != null">complete_time,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="remark != null">remark,</if>
+            <if test="delFlag != null">del_flag,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="postId != null">#{postId},</if>
+            <if test="studentId != null">#{studentId},</if>
+            <if test="resumeId != null">#{resumeId},</if>
+            <if test="applyTime != null">#{applyTime},</if>
+            <if test="applicationStatus != null">#{applicationStatus},</if>
+            <if test="processTime != null">#{processTime},</if>
+            <if test="enterpriseRemark != null">#{enterpriseRemark},</if>
+            <if test="completeTime != null">#{completeTime},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="remark != null">#{remark},</if>
+            <if test="delFlag != null">#{delFlag},</if>
+         </trim>
+    </insert>
+
+    <update id="updateJobApplication" parameterType="JobApplication">
+        update t_job_application
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="postId != null">post_id = #{postId},</if>
+            <if test="studentId != null">student_id = #{studentId},</if>
+            <if test="resumeId != null">resume_id = #{resumeId},</if>
+            <if test="applyTime != null">apply_time = #{applyTime},</if>
+            <if test="applicationStatus != null">application_status = #{applicationStatus},</if>
+            <if test="processTime != null">process_time = #{processTime},</if>
+            <if test="enterpriseRemark != null">enterprise_remark = #{enterpriseRemark},</if>
+            <if test="completeTime != null">complete_time = #{completeTime},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="delFlag != null">del_flag = #{delFlag},</if>
+        </trim>
+        where application_id = #{applicationId}
+    </update>
+
+    <delete id="deleteJobApplicationByApplicationId" parameterType="Long">
+        delete from t_job_application where application_id = #{applicationId}
+    </delete>
+
+    <delete id="deleteJobApplicationByApplicationIds" parameterType="String">
+        delete from t_job_application where application_id in 
+        <foreach item="applicationId" collection="array" open="(" separator="," close=")">
+            #{applicationId}
+        </foreach>
+    </delete>
+</mapper>
