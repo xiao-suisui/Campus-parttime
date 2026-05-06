@@ -85,14 +85,15 @@ public class SysNoticeController extends BaseController
     }
 
     /**
-     * 首页顶部公告列表（返回全部正常公告，带当前用户已读标记，最多5条）
+     * 首页顶部公告列表（返回全部正常公告，带当前用户已读标记）
      */
     @GetMapping("/listTop")
     @ResponseBody
-    public AjaxResult listTop()
+    public AjaxResult listTop(Integer limit)
     {
         Long userId = getUserId();
-        List<SysNotice> list = noticeReadService.selectNoticeListWithReadStatus(userId, 5);
+        int maxCount = (limit != null && limit > 0) ? limit : 5;
+        List<SysNotice> list = noticeReadService.selectNoticeListWithReadStatus(userId, maxCount);
         long unreadCount = list.stream().filter(n -> !n.getIsRead()).count();
         AjaxResult result = AjaxResult.success(list);
         result.put("unreadCount", unreadCount);

@@ -1,0 +1,160 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.biz.recruitment.mapper.JobPostMapper">
+
+    <resultMap type="JobPost" id="JobPostResult">
+        <result property="postId"    column="post_id"    />
+        <result property="enterpriseId"    column="enterprise_id"    />
+        <result property="postName"    column="post_name"    />
+        <result property="salaryMin"    column="salary_min"    />
+        <result property="salaryMax"    column="salary_max"    />
+        <result property="salaryUnit"    column="salary_unit"    />
+        <result property="workLocationType"    column="work_location_type"    />
+        <result property="workAddress"    column="work_address"    />
+        <result property="workType"    column="work_type"    />
+        <result property="workTimeDesc"    column="work_time_desc"    />
+        <result property="requirementDesc"    column="requirement_desc"    />
+        <result property="recruitCount"    column="recruit_count"    />
+        <result property="deadlineTime"    column="deadline_time"    />
+        <result property="contactName"    column="contact_name"    />
+        <result property="contactPhone"    column="contact_phone"    />
+        <result property="postStatus"    column="post_status"    />
+        <result property="viewCount"    column="view_count"    />
+        <result property="collectCount"    column="collect_count"    />
+        <result property="applyCount"    column="apply_count"    />
+        <result property="hireCount"    column="hire_count"    />
+        <result property="completeCount"    column="complete_count"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="remark"    column="remark"    />
+        <result property="delFlag"    column="del_flag"    />
+    </resultMap>
+
+    <sql id="selectJobPostVo">
+        select post_id, enterprise_id, post_name, salary_min, salary_max, salary_unit, work_location_type, work_address, work_type, work_time_desc, requirement_desc, recruit_count, deadline_time, contact_name, contact_phone, post_status, view_count, collect_count, apply_count, hire_count, complete_count, create_by, create_time, update_by, update_time, remark, del_flag from t_job_post
+    </sql>
+
+    <select id="selectJobPostList" parameterType="JobPost" resultMap="JobPostResult">
+        <include refid="selectJobPostVo"/>
+        <where>
+            <if test="enterpriseId != null"> and enterprise_id = #{enterpriseId}</if>
+            <if test="postName != null  and postName != ''"> and post_name like concat('%', #{postName}, '%')</if>
+            <if test="workType != null  and workType != ''"> and work_type = #{workType}</if>
+            <if test="params.beginDeadlineTime != null and params.beginDeadlineTime != '' and params.endDeadlineTime != null and params.endDeadlineTime != ''"> and deadline_time between #{params.beginDeadlineTime} and #{params.endDeadlineTime}</if>
+            <if test="postStatus != null  and postStatus != ''"> and post_status = #{postStatus}</if>
+        </where>
+    </select>
+
+    <select id="selectJobPostByPostId" parameterType="Long" resultMap="JobPostResult">
+        <include refid="selectJobPostVo"/>
+        where post_id = #{postId}
+    </select>
+
+    <insert id="insertJobPost" parameterType="JobPost" useGeneratedKeys="true" keyProperty="postId">
+        insert into t_job_post
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="enterpriseId != null">enterprise_id,</if>
+            <if test="postName != null and postName != ''">post_name,</if>
+            <if test="salaryMin != null">salary_min,</if>
+            <if test="salaryMax != null">salary_max,</if>
+            <if test="salaryUnit != null and salaryUnit != ''">salary_unit,</if>
+            <if test="workLocationType != null and workLocationType != ''">work_location_type,</if>
+            <if test="workAddress != null and workAddress != ''">work_address,</if>
+            <if test="workType != null and workType != ''">work_type,</if>
+            <if test="workTimeDesc != null and workTimeDesc != ''">work_time_desc,</if>
+            <if test="requirementDesc != null">requirement_desc,</if>
+            <if test="recruitCount != null">recruit_count,</if>
+            <if test="deadlineTime != null">deadline_time,</if>
+            <if test="contactName != null">contact_name,</if>
+            <if test="contactPhone != null">contact_phone,</if>
+            <if test="postStatus != null and postStatus != ''">post_status,</if>
+            <if test="viewCount != null">view_count,</if>
+            <if test="collectCount != null">collect_count,</if>
+            <if test="applyCount != null">apply_count,</if>
+            <if test="hireCount != null">hire_count,</if>
+            <if test="completeCount != null">complete_count,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="remark != null">remark,</if>
+            <if test="delFlag != null">del_flag,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="enterpriseId != null">#{enterpriseId},</if>
+            <if test="postName != null and postName != ''">#{postName},</if>
+            <if test="salaryMin != null">#{salaryMin},</if>
+            <if test="salaryMax != null">#{salaryMax},</if>
+            <if test="salaryUnit != null and salaryUnit != ''">#{salaryUnit},</if>
+            <if test="workLocationType != null and workLocationType != ''">#{workLocationType},</if>
+            <if test="workAddress != null and workAddress != ''">#{workAddress},</if>
+            <if test="workType != null and workType != ''">#{workType},</if>
+            <if test="workTimeDesc != null and workTimeDesc != ''">#{workTimeDesc},</if>
+            <if test="requirementDesc != null">#{requirementDesc},</if>
+            <if test="recruitCount != null">#{recruitCount},</if>
+            <if test="deadlineTime != null">#{deadlineTime},</if>
+            <if test="contactName != null">#{contactName},</if>
+            <if test="contactPhone != null">#{contactPhone},</if>
+            <if test="postStatus != null and postStatus != ''">#{postStatus},</if>
+            <if test="viewCount != null">#{viewCount},</if>
+            <if test="collectCount != null">#{collectCount},</if>
+            <if test="applyCount != null">#{applyCount},</if>
+            <if test="hireCount != null">#{hireCount},</if>
+            <if test="completeCount != null">#{completeCount},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="remark != null">#{remark},</if>
+            <if test="delFlag != null">#{delFlag},</if>
+         </trim>
+    </insert>
+
+    <update id="updateJobPost" parameterType="JobPost">
+        update t_job_post
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="enterpriseId != null">enterprise_id = #{enterpriseId},</if>
+            <if test="postName != null and postName != ''">post_name = #{postName},</if>
+            <if test="salaryMin != null">salary_min = #{salaryMin},</if>
+            <if test="salaryMax != null">salary_max = #{salaryMax},</if>
+            <if test="salaryUnit != null and salaryUnit != ''">salary_unit = #{salaryUnit},</if>
+            <if test="workLocationType != null and workLocationType != ''">work_location_type = #{workLocationType},</if>
+            <if test="workAddress != null and workAddress != ''">work_address = #{workAddress},</if>
+            <if test="workType != null and workType != ''">work_type = #{workType},</if>
+            <if test="workTimeDesc != null and workTimeDesc != ''">work_time_desc = #{workTimeDesc},</if>
+            <if test="requirementDesc != null">requirement_desc = #{requirementDesc},</if>
+            <if test="recruitCount != null">recruit_count = #{recruitCount},</if>
+            <if test="deadlineTime != null">deadline_time = #{deadlineTime},</if>
+            <if test="contactName != null">contact_name = #{contactName},</if>
+            <if test="contactPhone != null">contact_phone = #{contactPhone},</if>
+            <if test="postStatus != null and postStatus != ''">post_status = #{postStatus},</if>
+            <if test="viewCount != null">view_count = #{viewCount},</if>
+            <if test="collectCount != null">collect_count = #{collectCount},</if>
+            <if test="applyCount != null">apply_count = #{applyCount},</if>
+            <if test="hireCount != null">hire_count = #{hireCount},</if>
+            <if test="completeCount != null">complete_count = #{completeCount},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="delFlag != null">del_flag = #{delFlag},</if>
+        </trim>
+        where post_id = #{postId}
+    </update>
+
+    <delete id="deleteJobPostByPostId" parameterType="Long">
+        delete from t_job_post where post_id = #{postId}
+    </delete>
+
+    <delete id="deleteJobPostByPostIds" parameterType="String">
+        delete from t_job_post where post_id in
+        <foreach item="postId" collection="array" open="(" separator="," close=")">
+            #{postId}
+        </foreach>
+    </delete>
+</mapper>

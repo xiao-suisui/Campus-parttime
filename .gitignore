@@ -1,0 +1,104 @@
+# ==================== 通用 ====================
+# 操作系统文件
+.DS_Store
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# 日志文件
+*.log
+logs/
+log/
+
+# 临时文件
+*.tmp
+*.temp
+*.swp
+*.swo
+*~
+
+# ==================== IDE ====================
+# IntelliJ IDEA
+.idea/
+*.iml
+*.iws
+*.ipr
+out/
+
+# Eclipse
+.project
+.classpath
+.settings/
+bin/
+
+# VS Code
+.vscode/
+
+# ==================== Java / Maven ====================
+# 编译产物
+target/
+*.class
+*.jar
+*.war
+*.ear
+
+# Maven
+.mvn/
+mvnw
+mvnw.cmd
+
+# ==================== Node / Vue ====================
+# 依赖
+node_modules/
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# 构建产物
+dist/
+build/
+
+# 环境配置（保留示例）
+.env.local
+.env.*.local
+
+# ==================== 后端特定 ====================
+# Spring Boot
+backend/ruoyi-admin/src/main/resources/application-dev.yml
+backend/ruoyi-admin/src/main/resources/application-prod.yml
+
+# 上传文件目录
+backend/ruoyi-admin/upload/
+backend/upload/
+
+# 代码生成器输出
+backend/ruoyi-generator/target/
+
+# ==================== 前端特定 ====================
+# 前端构建
+frontend/dist/
+frontend/node_modules/
+
+# ==================== 移动端 ====================
+# UniApp
+RuoYi-App-master/node_modules/
+RuoYi-App-master/unpackage/
+RuoYi-App-master/dist/
+
+# ==================== 文档 ====================
+# 个人笔记（可选）
+doc/personal/
+doc/draft/
+
+# ==================== 安全 ====================
+# 密钥和证书
+*.pem
+*.key
+*.crt
+*.p12
+*.jks
+
+# 环境变量
+.env
+.env.production
+.env.development
