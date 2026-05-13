@@ -2,7 +2,14 @@
   <view class="work-container">
     <!-- 搜索栏 -->
     <view class="search-bar">
-      <uni-search-bar v-model="keyword" placeholder="搜索岗位" @confirm="onSearch" />
+      <uni-search-bar v-model="queryParams.postName" placeholder="搜索岗位" @confirm="onSearch" @cancel="onReset" />
+    </view>
+
+    <!-- 筛选条件 -->
+    <view class="filter-bar">
+      <uni-data-select v-model="queryParams.salaryUnit" :localdata="settlementOptions" placeholder="结算方式" @change="onFilter" clearable />
+      <uni-data-select v-model="queryParams.workType" :localdata="workTypeOptions" placeholder="工作类型" @change="onFilter" clearable />
+      <uni-data-select v-model="queryParams.workLocationType" :localdata="locationOptions" placeholder="工作地点" @change="onFilter" clearable />
     </view>
 
     <!-- 推荐区域 -->
@@ -11,70 +18,31 @@
       <scroll-view scroll-x class="recommend-scroll">
         <view v-for="item in recommendList" :key="item.postId" class="recommend-card" @click="goDetail(item.postId)">
           <view class="recommend-name">{{ item.postName }}</view>
-          <view class="recommend-salary">{{ item.salaryMin }}-{{ item.salaryMax }}元/{{ item.salaryUnit }}</view>
+          <view class="recommend-salary">{{ item.salaryMin }}-{{ item.salaryMax }}元/{{ formatSalaryUnit(item.salaryUnit) }}</view>
           <view class="recommend-addr">{{ item.workAddress }}</view>
         </view>
       </scroll-view>
     </view>
 
-    <!-- 功能入口 -->
-    <view class="section-title">功能入口</view>
-    <view class="grid-body">
-      <uni-grid :column="4" :showBorder="false" @change="changeGrid">
-        <uni-grid-item>
-          <view class="grid-item-box">
-            <uni-icons type="list" size="30" color="#667eea"></uni-icons>
-            <text class="text">岗位大厅</text>
-          </view>
-        </uni-grid-item>
-        <uni-grid-item>
-          <view class="grid-item-box">
-            <uni-icons type="paperplane-filled" size="30" color="#667eea"></uni-icons>
-            <text class="text">投递管理</text>
-          </view>
-        </uni-grid-item>
-        <uni-grid-item>
-          <view class="grid-item-box">
-            <uni-icons type="heart-filled" size="30" color="#ff4757"></uni-icons>
-            <text class="text">我的收藏</text>
-          </view>
-        </uni-grid-item>
-        <uni-grid-item>
-          <view class="grid-item-box">
-            <uni-icons type="chat-filled" size="30" color="#ff9f43"></uni-icons>
-            <text class="text">互评管理</text>
-          </view>
-        </uni-grid-item>
-        <uni-grid-item>
-          <view class="grid-item-box">
-            <uni-icons type="person-filled" size="30" color="#667eea"></uni-icons>
-            <text class="text">个人信息</text>
-          </view>
-        </uni-grid-item>
-        <uni-grid-item>
-          <view class="grid-item-box">
-            <uni-icons type="compose" size="30" color="#667eea"></uni-icons>
-            <text class="text">我的简历</text>
-          </view>
-        </uni-grid-item>
-      </uni-grid>
-    </view>
-
-    <!-- 最新岗位 -->
-    <view class="section-title">最新岗位</view>
+    <!-- 岗位列表 -->
+    <view class="section-title">{{ queryParams.postName ? '搜索结果' : '最新岗位' }}</view>
     <view class="post-list">
       <view v-for="item in postList" :key="item.postId" class="post-card" @click="goDetail(item.postId)">
         <view class="post-header">
           <text class="post-name">{{ item.postName }}</text>
-          <text class="post-salary">{{ item.salaryMin }}-{{ item.salaryMax }}元/{{ item.salaryUnit }}</text>
+          <text class="post-salary">{{ item.salaryMin }}-{{ item.salaryMax }}元/{{ formatSalaryUnit(item.salaryUnit) }}</text>
         </view>
         <view class="post-footer">
           <view class="post-tags">
-            <uni-tag :text="item.workType" type="primary" size="small" />
-            <uni-tag :text="item.workLocationType" type="success" size="small" />
+            <uni-tag :text="formatWorkType(item.workType)" type="primary" size="small" />
+            <uni-tag :text="formatLocationType(item.workLocationType)" type="success" size="small" />
           </view>
           <text class="post-addr">{{ item.workAddress }}</text>
         </view>
+      </view>
+
+      <view v-if="postList.length === 0 && !loading" class="empty-state">
+        <text>暂无岗位信息</text>
       </view>
     </view>
   </view>
@@ -86,9 +54,33 @@ import { listPost, getRecommendPosts } from '@/api/student/post'
 export default {
   data() {
     return {
-      keyword: '',
+      loading: false,
       recommendList: [],
-      postList: []
+      postList: [],
+      queryParams: {
+        pageNum: 1,
+        pageSize: 10,
+        postName: '',
+        salaryUnit: '',
+        workType: '',
+        workLocationType: ''
+      },
+      settlementOptions: [
+        { value: '1', text: '日结' },
+        { value: '2', text: '周结' },
+        { value: '3', text: '月结' }
+      ],
+      workTypeOptions: [
+        { value: '1', text: '短期' },
+        { value: '2', text: '长期' },
+        { value: '3', text: '实习' }
+      ],
+      locationOptions: [
+        { value: '1', text: '校内' },
+        { value: '2', text: '校外' },
+        { value: '3', text: '远程' }
+      ],
+      hasMore: true
     }
   },
   onLoad() {
@@ -96,42 +88,64 @@ export default {
     this.loadPosts()
   },
   onPullDownRefresh() {
+    this.queryParams.pageNum = 1
+    this.hasMore = true
+    this.postList = []
     this.loadRecommend()
     this.loadPosts()
   },
+  onReachBottom() {
+    if (this.hasMore && !this.loading) {
+      this.queryParams.pageNum++
+      this.loadPosts()
+    }
+  },
   methods: {
+    formatSalaryUnit(unit) {
+      const map = { '1': '日结', '2': '周结', '3': '月结' }
+      return map[unit] || unit || ''
+    },
+    formatWorkType(type) {
+      const map = { '1': '短期', '2': '长期', '3': '实习' }
+      return map[type] || type || ''
+    },
+    formatLocationType(type) {
+      const map = { '1': '校内', '2': '校外', '3': '远程' }
+      return map[type] || type || ''
+    },
     loadRecommend() {
       getRecommendPosts(6).then(res => {
         this.recommendList = res.data || []
       })
     },
     loadPosts() {
-      listPost({ pageNum: 1, pageSize: 10 }).then(res => {
-        this.postList = res.rows || []
+      this.loading = true
+      listPost(this.queryParams).then(res => {
+        const rows = res.rows || []
+        if (rows.length < this.queryParams.pageSize) {
+          this.hasMore = false
+        }
+        this.postList = this.queryParams.pageNum === 1 ? rows : this.postList.concat(rows)
       }).finally(() => {
+        this.loading = false
         uni.stopPullDownRefresh()
       })
     },
     onSearch() {
-      if (this.keyword.trim()) {
-        uni.navigateTo({ url: '/pages/work/index?keyword=' + this.keyword })
-      }
+      this.queryParams.pageNum = 1
+      this.hasMore = true
+      this.postList = []
+      this.loadPosts()
     },
-    changeGrid(e) {
-      const routes = [
-        '/pages/work/index',
-        '/pages/student/application/list',
-        '/pages/student/collection/list',
-        '/pages/student/evaluation/list',
-        '/pages/student/info/index',
-        '/pages/student/resume/index'
-      ]
-      const index = e.detail.index
-      if (index === 0) {
-        // 岗位大厅 - 当前页面，不跳转
-        return
-      }
-      uni.navigateTo({ url: routes[index] })
+    onReset() {
+      this.queryParams.postName = ''
+      this.onSearch()
+    },
+    onFilter() {
+      this.queryParams.pageNum = 1
+      this.hasMore = true
+      this.postList = []
+      this.loadPosts()
     },
     goDetail(postId) {
       uni.navigateTo({ url: '/pages/student/post/detail?id=' + postId })
@@ -160,6 +174,13 @@ view {
 .search-bar {
   background-color: #fff;
   padding: 10rpx 20rpx;
+}
+
+.filter-bar {
+  display: flex;
+  background-color: #fff;
+  padding: 10rpx 20rpx;
+  gap: 16rpx;
 }
 
 .recommend-section {
@@ -211,29 +232,6 @@ view {
   white-space: nowrap;
 }
 
-.grid-body {
-  background-color: #fff;
-  margin-top: 10rpx;
-  padding: 10rpx 0;
-}
-
-.grid-item-box {
-  flex: 1;
-  /* #ifndef APP-NVUE */
-  display: flex;
-  /* #endif */
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 15px 0;
-}
-
-.text {
-  text-align: center;
-  font-size: 26rpx;
-  margin-top: 10rpx;
-}
-
 .post-list {
   padding: 10rpx 20rpx 20rpx;
 }
@@ -277,6 +275,12 @@ view {
 
 .post-addr {
   font-size: 24rpx;
+  color: #999;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 100rpx 0;
   color: #999;
 }
 </style>

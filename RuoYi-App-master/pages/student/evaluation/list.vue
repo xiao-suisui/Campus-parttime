@@ -1,6 +1,12 @@
 <template>
   <view class="evaluation-container">
-    <view class="eval-list">
+    <!-- Tab 切换 -->
+    <view class="tab-bar">
+      <uni-segmented-control :current="currentTab" :values="tabs" @clickItem="onClickTab" style-type="button" active-color="#667eea" />
+    </view>
+
+    <!-- 我发出的评价 -->
+    <view v-if="currentTab === 0" class="eval-list">
       <view v-for="item in evalList" :key="item.evaluationId" class="eval-card">
         <view class="eval-header">
           <text class="eval-post">{{ item.postName || '岗位' }}</text>
@@ -22,6 +28,26 @@
 
       <view v-if="evalList.length === 0 && !loading" class="empty-state">
         <text>暂无评价记录</text>
+      </view>
+    </view>
+
+    <!-- 收到的评价 -->
+    <view v-if="currentTab === 1" class="eval-list">
+      <view v-for="item in aboutMeList" :key="item.evaluationId" class="eval-card">
+        <view class="eval-header">
+          <text class="eval-post">{{ item.postName || '岗位#' + item.postId }}</text>
+          <uni-tag text="企业评价" type="primary" size="small" />
+        </view>
+        <view class="eval-enterprise">{{ item.enterpriseName || '企业' }}</view>
+        <view class="eval-content">
+          <uni-rate :value="item.score" disabled size="18" />
+          <text class="eval-text">{{ item.content }}</text>
+          <text class="eval-time">{{ item.evaluationTime }}</text>
+        </view>
+      </view>
+
+      <view v-if="aboutMeList.length === 0 && !aboutMeLoading" class="empty-state">
+        <text>暂无收到的评价</text>
       </view>
     </view>
 
@@ -47,13 +73,17 @@
 </template>
 
 <script>
-import { listEvaluation, addEvaluation } from '@/api/student/evaluation'
+import { listEvaluation, addEvaluation, listEvaluationsAboutMe } from '@/api/student/evaluation'
 
 export default {
   data() {
     return {
+      currentTab: 0,
+      tabs: ['我发出的', '收到的'],
       loading: false,
+      aboutMeLoading: false,
       evalList: [],
+      aboutMeList: [],
       evalForm: {
         applicationId: '',
         postName: '',
@@ -66,15 +96,34 @@ export default {
     this.loadList()
   },
   onPullDownRefresh() {
-    this.loadList()
+    if (this.currentTab === 0) {
+      this.loadList()
+    } else {
+      this.loadAboutMeList()
+    }
   },
   methods: {
+    onClickTab(e) {
+      this.currentTab = e.currentIndex
+      if (this.currentTab === 1 && this.aboutMeList.length === 0) {
+        this.loadAboutMeList()
+      }
+    },
     loadList() {
       this.loading = true
       listEvaluation().then(res => {
         this.evalList = res.rows || []
       }).finally(() => {
         this.loading = false
+        uni.stopPullDownRefresh()
+      })
+    },
+    loadAboutMeList() {
+      this.aboutMeLoading = true
+      listEvaluationsAboutMe().then(res => {
+        this.aboutMeList = res.rows || []
+      }).finally(() => {
+        this.aboutMeLoading = false
         uni.stopPullDownRefresh()
       })
     },
@@ -113,6 +162,11 @@ export default {
 .evaluation-container {
   background-color: #f5f5f5;
   min-height: 100vh;
+}
+
+.tab-bar {
+  padding: 20rpx 30rpx;
+  background-color: #fff;
 }
 
 .eval-list {
@@ -156,6 +210,13 @@ export default {
   color: #666;
   margin-top: 12rpx;
   line-height: 1.6;
+}
+
+.eval-time {
+  font-size: 24rpx;
+  color: #999;
+  margin-top: 12rpx;
+  display: block;
 }
 
 .eval-action {

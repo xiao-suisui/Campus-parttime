@@ -5,6 +5,7 @@ import com.ruoyi.biz.recruitment.domain.JobPost;
 import com.ruoyi.biz.enterprise.domain.EnterpriseInfo;
 import com.ruoyi.biz.recruitment.domain.JobApplication;
 import com.ruoyi.biz.recruitment.domain.JobEvaluation;
+import com.ruoyi.biz.student.domain.StudentResume;
 
 /**
  * Enterprise-side business flow service.
@@ -44,6 +45,10 @@ public interface IEnterpriseFlowService
     List<JobEvaluation> listMyEvaluations(Long enterpriseId, JobEvaluation query);
 
     int evaluateStudent(Long enterpriseId, Long applicationId, Integer score, String content);
+
+    StudentResume getApplicationResume(Long enterpriseId, Long applicationId);
+
+    List<JobEvaluation> listEvaluationsAboutMe(Long enterpriseId, JobEvaluation query);
 
     List<EnterpriseInfo> listEnterpriseForAudit(EnterpriseInfo query);
 

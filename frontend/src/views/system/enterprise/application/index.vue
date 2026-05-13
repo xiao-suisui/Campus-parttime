@@ -32,9 +32,10 @@
       <el-table-column label="投递时间" prop="applyTime" width="160" align="center">
         <template slot-scope="scope">{{ parseTime(scope.row.applyTime) }}</template>
       </el-table-column>
-      <el-table-column label="操作" min-width="200" align="center" class-name="small-padding fixed-width">
+      <el-table-column label="操作" min-width="240" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button type="text" size="mini" v-hasPermi="['enterprise:application:query']" @click="handleView(scope.row)">详情</el-button>
+          <el-button type="text" size="mini" v-hasPermi="['enterprise:application:query']" @click="handleViewResume(scope.row)">查看简历</el-button>
           <el-button
             v-if="scope.row.applicationStatus == '0'"
             type="text"
@@ -78,6 +79,19 @@
         <el-descriptions-item label="企业备注">{{ detailForm.enterpriseRemark }}</el-descriptions-item>
       </el-descriptions>
     </el-dialog>
+
+    <!-- 简历对话框 -->
+    <el-dialog title="学生简历" :visible.sync="resumeOpen" width="600px" append-to-body>
+      <el-descriptions :column="1" border v-if="resumeForm">
+        <el-descriptions-item label="期望岗位">{{ resumeForm.expectedPosition }}</el-descriptions-item>
+        <el-descriptions-item label="期望薪资">{{ resumeForm.expectedSalaryMin }} - {{ resumeForm.expectedSalaryMax }} 元/月</el-descriptions-item>
+        <el-descriptions-item label="教育经历">{{ resumeForm.educationExperience || '未填写' }}</el-descriptions-item>
+        <el-descriptions-item label="兼职经历">{{ resumeForm.partTimeExperience || '未填写' }}</el-descriptions-item>
+        <el-descriptions-item label="技能标签">{{ resumeForm.skillTags || '未填写' }}</el-descriptions-item>
+        <el-descriptions-item label="自我介绍">{{ resumeForm.selfIntro || '未填写' }}</el-descriptions-item>
+      </el-descriptions>
+      <div v-else style="text-align:center;color:#999;padding:20px;">暂无简历信息</div>
+    </el-dialog>
   </div>
 </template>
 
@@ -87,7 +101,8 @@ import {
   getEnterpriseApplication,
   hireEnterpriseApplication,
   completeEnterpriseApplication,
-  rejectEnterpriseApplication
+  rejectEnterpriseApplication,
+  getApplicationResume
 } from '@/api/enterprise/application'
 
 export default {
@@ -99,6 +114,7 @@ export default {
       showSearch: true,
       total: 0,
       detailOpen: false,
+      resumeOpen: false,
       applicationList: [],
       queryParams: {
         pageNum: 1,
@@ -106,7 +122,8 @@ export default {
         postId: undefined,
         applicationStatus: undefined
       },
-      detailForm: {}
+      detailForm: {},
+      resumeForm: null
     }
   },
   created() {
@@ -134,6 +151,15 @@ export default {
       getEnterpriseApplication(row.applicationId).then((response) => {
         this.detailForm = response.data
         this.detailOpen = true
+      })
+    },
+    handleViewResume(row) {
+      getApplicationResume(row.applicationId).then((response) => {
+        this.resumeForm = response.data
+        this.resumeOpen = true
+      }).catch(() => {
+        this.resumeForm = null
+        this.resumeOpen = true
       })
     },
     handleHire(row) {

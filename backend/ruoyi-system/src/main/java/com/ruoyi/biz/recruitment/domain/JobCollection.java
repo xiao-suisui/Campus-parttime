@@ -36,6 +36,38 @@ public class JobCollection extends BaseEntity
     /** 删除标志（0存在 2删除） */
     private String delFlag;
 
+    /** ---- 以下为关联查询的岗位信息（非表字段） ---- */
+
+    /** 岗位名称 */
+    private String postName;
+
+    /** 薪资下限 */
+    private java.math.BigDecimal salaryMin;
+
+    /** 薪资上限 */
+    private java.math.BigDecimal salaryMax;
+
+    /** 结算方式 */
+    private String salaryUnit;
+
+    /** 工作地点 */
+    private String workAddress;
+
+    public void setPostName(String postName) { this.postName = postName; }
+    public String getPostName() { return postName; }
+
+    public void setSalaryMin(java.math.BigDecimal salaryMin) { this.salaryMin = salaryMin; }
+    public java.math.BigDecimal getSalaryMin() { return salaryMin; }
+
+    public void setSalaryMax(java.math.BigDecimal salaryMax) { this.salaryMax = salaryMax; }
+    public java.math.BigDecimal getSalaryMax() { return salaryMax; }
+
+    public void setSalaryUnit(String salaryUnit) { this.salaryUnit = salaryUnit; }
+    public String getSalaryUnit() { return salaryUnit; }
+
+    public void setWorkAddress(String workAddress) { this.workAddress = workAddress; }
+    public String getWorkAddress() { return workAddress; }
+
     public void setCollectionId(Long collectionId)
     {
         this.collectionId = collectionId;

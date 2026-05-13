@@ -15,25 +15,34 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="updateTime"    column="update_time"    />
         <result property="remark"    column="remark"    />
         <result property="delFlag"    column="del_flag"    />
+        <result property="postName"    column="post_name"    />
+        <result property="salaryMin"    column="salary_min"    />
+        <result property="salaryMax"    column="salary_max"    />
+        <result property="salaryUnit"    column="salary_unit"    />
+        <result property="workAddress"    column="work_address"    />
     </resultMap>
 
     <sql id="selectJobCollectionVo">
-        select collection_id, student_id, post_id, collection_time, create_by, create_time, update_by, update_time, remark, del_flag from t_job_collection
+        select c.collection_id, c.student_id, c.post_id, c.collection_time, c.create_by, c.create_time, c.update_by, c.update_time, c.remark, c.del_flag,
+               p.post_name, p.salary_min, p.salary_max, p.salary_unit, p.work_address
+        from t_job_collection c
+        left join t_job_post p on c.post_id = p.post_id
     </sql>
 
     <select id="selectJobCollectionList" parameterType="JobCollection" resultMap="JobCollectionResult">
         <include refid="selectJobCollectionVo"/>
-        <where>  
-            <if test="collectionId != null "> and collection_id = #{collectionId}</if>
-            <if test="studentId != null "> and student_id = #{studentId}</if>
-            <if test="postId != null "> and post_id = #{postId}</if>
-            <if test="params.beginCollectionTime != null and params.beginCollectionTime != '' and params.endCollectionTime != null and params.endCollectionTime != ''"> and collection_time between #{params.beginCollectionTime} and #{params.endCollectionTime}</if>
+        <where>
+            <if test="collectionId != null "> and c.collection_id = #{collectionId}</if>
+            <if test="studentId != null "> and c.student_id = #{studentId}</if>
+            <if test="postId != null "> and c.post_id = #{postId}</if>
+            <if test="params.beginCollectionTime != null and params.beginCollectionTime != '' and params.endCollectionTime != null and params.endCollectionTime != ''"> and c.collection_time between #{params.beginCollectionTime} and #{params.endCollectionTime}</if>
         </where>
+        order by c.collection_time desc
     </select>
     
     <select id="selectJobCollectionByCollectionId" parameterType="Long" resultMap="JobCollectionResult">
         <include refid="selectJobCollectionVo"/>
-        where collection_id = #{collectionId}
+        where c.collection_id = #{collectionId}
     </select>
 
     <insert id="insertJobCollection" parameterType="JobCollection" useGeneratedKeys="true" keyProperty="collectionId">

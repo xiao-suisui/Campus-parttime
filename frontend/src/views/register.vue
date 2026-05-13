@@ -1,7 +1,8 @@
 <template>
   <div class="register">
     <el-form ref="registerForm" :model="registerForm" :rules="registerRules" class="register-form">
-      <h3 class="title">{{title}}</h3>
+      <h3 class="title">企业注册</h3>
+      <div class="tip">注册后需完善企业信息并等待管理员审核</div>
       <el-form-item prop="username">
         <el-input v-model="registerForm.username" type="text" auto-complete="off" placeholder="账号">
           <svg-icon slot="prefix" icon-class="user" class="el-input__icon input-icon" />
@@ -68,6 +69,7 @@
 
 <script>
 import { getCodeImg, register } from "@/api/login"
+import { removeToken } from '@/utils/auth'
 import defaultSettings from '@/settings'
 
 export default {
@@ -89,7 +91,8 @@ export default {
         password: "",
         confirmPassword: "",
         code: "",
-        uuid: ""
+        uuid: "",
+        userType: "enterprise"
       },
       registerRules: {
         username: [
@@ -130,6 +133,8 @@ export default {
           this.loading = true
           register(this.registerForm).then(() => {
             const username = this.registerForm.username
+            // 注册成功后清除可能存在的旧token
+            removeToken()
             this.$alert("<font color='red'>恭喜你，您的账号 " + username + " 注册成功！</font>", '系统提示', {
               dangerouslyUseHTMLString: true,
               type: 'success'
@@ -159,9 +164,15 @@ export default {
   background-size: cover;
 }
 .title {
-  margin: 0px auto 30px auto;
+  margin: 0px auto 10px auto;
   text-align: center;
   color: #707070;
+}
+.tip {
+  margin: 0px auto 20px auto;
+  text-align: center;
+  color: #999;
+  font-size: 12px;
 }
 
 .register-form {

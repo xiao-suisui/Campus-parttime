@@ -10,9 +10,9 @@
 
         <uni-forms-item label="期望薪资" name="expectedSalary">
           <view class="salary-range">
-            <uni-number-box v-model="form.expectedSalaryMin" :min="0" :max="99999" :step="100" />
+            <uni-easyinput v-model="form.expectedSalaryMin" type="number" placeholder="最低" />
             <text class="salary-sep">~</text>
-            <uni-number-box v-model="form.expectedSalaryMax" :min="0" :max="99999" :step="100" />
+            <uni-easyinput v-model="form.expectedSalaryMax" type="number" placeholder="最高" />
             <text class="salary-unit">元/月</text>
           </view>
         </uni-forms-item>
@@ -115,11 +115,14 @@ export default {
 .salary-sep {
   font-size: 28rpx;
   color: #999;
+  flex-shrink: 0;
 }
 
 .salary-unit {
   font-size: 26rpx;
   color: #666;
+  flex-shrink: 0;
+  white-space: nowrap;
 }
 
 .btn-save {

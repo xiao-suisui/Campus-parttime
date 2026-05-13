@@ -5,7 +5,7 @@
         <view class="card-body" @click="goDetail(item.postId)">
           <view class="card-header">
             <text class="card-name">{{ item.postName || '岗位' }}</text>
-            <text class="card-salary">{{ item.salaryMin }}-{{ item.salaryMax }}元/{{ item.salaryUnit }}</text>
+            <text class="card-salary">{{ item.salaryMin }}-{{ item.salaryMax }}元/{{ formatSalaryUnit(item.salaryUnit) }}</text>
           </view>
           <view class="card-footer">
             <text class="card-addr">{{ item.workAddress }}</text>
@@ -28,6 +28,7 @@
 <script>
 import { listCollection, delCollection } from '@/api/student/collection'
 import { addApplication } from '@/api/student/application'
+import { getStudentResume } from '@/api/student/resume'
 
 export default {
   data() {
@@ -43,6 +44,10 @@ export default {
     this.loadList()
   },
   methods: {
+    formatSalaryUnit(unit) {
+      const map = { '1': '日结', '2': '周结', '3': '月结' }
+      return map[unit] || unit || ''
+    },
     loadList() {
       this.loading = true
       listCollection().then(res => {
@@ -56,16 +61,32 @@ export default {
       uni.navigateTo({ url: '/pages/student/post/detail?id=' + postId })
     },
     handleApply(postId) {
-      uni.showModal({
-        title: '确认投递',
-        content: '确定要投递该岗位吗？',
-        success: (res) => {
-          if (res.confirm) {
-            addApplication({ postId: postId }).then(() => {
-              uni.showToast({ title: '投递成功', icon: 'success' })
-            })
-          }
+      getStudentResume().then(res => {
+        if (!res.data || !res.data.resumeId) {
+          uni.showModal({
+            title: '提示',
+            content: '您还没有完善简历，请先创建简历后再投递',
+            confirmText: '去完善',
+            success: (r) => {
+              if (r.confirm) {
+                uni.navigateTo({ url: '/pages/student/resume/index' })
+              }
+            }
+          })
+          return
         }
+        const resumeId = res.data.resumeId
+        uni.showModal({
+          title: '确认投递',
+          content: '确定要投递该岗位吗？',
+          success: (modalRes) => {
+            if (modalRes.confirm) {
+              addApplication({ postId: postId, resumeId: resumeId }).then(() => {
+                uni.showToast({ title: '投递成功', icon: 'success' })
+              })
+            }
+          }
+        })
       })
     },
     handleCancel(postId) {

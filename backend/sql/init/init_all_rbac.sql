@@ -55,19 +55,19 @@ WHERE NOT EXISTS (SELECT 1 FROM sys_menu WHERE menu_id = 3300);
 
 -- 页面
 INSERT INTO sys_menu (menu_id, menu_name, parent_id, order_num, path, component, query, route_name, is_frame, is_cache, menu_type, visible, status, perms, icon, create_by, create_time, update_by, update_time, remark)
-SELECT 3301, '企业资料', 3300, 1, 'profile', 'system/enterprise/profile/index', '', '', 1, 0, 'C', '0', '0', 'enterprise:profile:query', 'user', 'admin', SYSDATE(), '', NULL, ''
+SELECT 3301, '企业资料', 3300, 1, 'profile', 'system/enterprise/profile/index', '', 'EnterpriseProfile', 1, 0, 'C', '0', '0', 'enterprise:profile:query', 'user', 'admin', SYSDATE(), '', NULL, ''
 WHERE NOT EXISTS (SELECT 1 FROM sys_menu WHERE menu_id = 3301);
 
 INSERT INTO sys_menu (menu_id, menu_name, parent_id, order_num, path, component, query, route_name, is_frame, is_cache, menu_type, visible, status, perms, icon, create_by, create_time, update_by, update_time, remark)
-SELECT 3302, '岗位管理', 3300, 2, 'post', 'system/enterprise/post/index', '', '', 1, 0, 'C', '0', '0', 'enterprise:post:list', 'clipboard', 'admin', SYSDATE(), '', NULL, ''
+SELECT 3302, '岗位管理', 3300, 2, 'post', 'system/enterprise/post/index', '', 'EnterprisePost', 1, 0, 'C', '0', '0', 'enterprise:post:list', 'clipboard', 'admin', SYSDATE(), '', NULL, ''
 WHERE NOT EXISTS (SELECT 1 FROM sys_menu WHERE menu_id = 3302);
 
 INSERT INTO sys_menu (menu_id, menu_name, parent_id, order_num, path, component, query, route_name, is_frame, is_cache, menu_type, visible, status, perms, icon, create_by, create_time, update_by, update_time, remark)
-SELECT 3303, '投递处理', 3300, 3, 'application', 'system/enterprise/application/index', '', '', 1, 0, 'C', '0', '0', 'enterprise:application:list', 'form', 'admin', SYSDATE(), '', NULL, ''
+SELECT 3303, '投递处理', 3300, 3, 'application', 'system/enterprise/application/index', '', 'EnterpriseApplication', 1, 0, 'C', '0', '0', 'enterprise:application:list', 'form', 'admin', SYSDATE(), '', NULL, ''
 WHERE NOT EXISTS (SELECT 1 FROM sys_menu WHERE menu_id = 3303);
 
 INSERT INTO sys_menu (menu_id, menu_name, parent_id, order_num, path, component, query, route_name, is_frame, is_cache, menu_type, visible, status, perms, icon, create_by, create_time, update_by, update_time, remark)
-SELECT 3304, '互评管理', 3300, 4, 'evaluation', 'system/enterprise/evaluation/index', '', '', 1, 0, 'C', '0', '0', 'enterprise:evaluation:list', 'message', 'admin', SYSDATE(), '', NULL, ''
+SELECT 3304, '互评管理', 3300, 4, 'evaluation', 'system/enterprise/evaluation/index', '', 'EnterpriseEvaluation', 1, 0, 'C', '0', '0', 'enterprise:evaluation:list', 'message', 'admin', SYSDATE(), '', NULL, ''
 WHERE NOT EXISTS (SELECT 1 FROM sys_menu WHERE menu_id = 3304);
 
 -- 企业资料按钮
@@ -141,31 +141,31 @@ WHERE NOT EXISTS (SELECT 1 FROM sys_menu WHERE menu_id = 3350);
 
 -- 页面
 INSERT INTO sys_menu (menu_id, menu_name, parent_id, order_num, path, component, query, route_name, is_frame, is_cache, menu_type, visible, status, perms, icon, create_by, create_time, update_by, update_time, remark)
-SELECT 3351, '岗位浏览', 3350, 1, 'post', 'system/student/post/index', '', '', 1, 0, 'C', '0', '0', 'student:job:list', 'search', 'admin', SYSDATE(), '', NULL, ''
+SELECT 3351, '岗位浏览', 3350, 1, 'post', 'system/student/post/index', '', 'StudentPost', 1, 0, 'C', '0', '0', 'student:job:list', 'search', 'admin', SYSDATE(), '', NULL, ''
 WHERE NOT EXISTS (SELECT 1 FROM sys_menu WHERE menu_id = 3351);
 
 INSERT INTO sys_menu (menu_id, menu_name, parent_id, order_num, path, component, query, route_name, is_frame, is_cache, menu_type, visible, status, perms, icon, create_by, create_time, update_by, update_time, remark)
-SELECT 3352, '岗位收藏', 3350, 2, 'collection', 'system/student/collection/index', '', '', 1, 0, 'C', '0', '0', 'student:collection:list', 'star', 'admin', SYSDATE(), '', NULL, ''
+SELECT 3352, '岗位收藏', 3350, 2, 'collection', 'system/student/collection/index', '', 'StudentCollection', 1, 0, 'C', '0', '0', 'student:collection:list', 'star', 'admin', SYSDATE(), '', NULL, ''
 WHERE NOT EXISTS (SELECT 1 FROM sys_menu WHERE menu_id = 3352);
 
 INSERT INTO sys_menu (menu_id, menu_name, parent_id, order_num, path, component, query, route_name, is_frame, is_cache, menu_type, visible, status, perms, icon, create_by, create_time, update_by, update_time, remark)
-SELECT 3353, '岗位投递', 3350, 3, 'application', 'system/student/application/index', '', '', 1, 0, 'C', '0', '0', 'student:application:list', 'edit', 'admin', SYSDATE(), '', NULL, ''
+SELECT 3353, '岗位投递', 3350, 3, 'application', 'system/student/application/index', '', 'StudentApplication', 1, 0, 'C', '0', '0', 'student:application:list', 'edit', 'admin', SYSDATE(), '', NULL, ''
 WHERE NOT EXISTS (SELECT 1 FROM sys_menu WHERE menu_id = 3353);
 
 INSERT INTO sys_menu (menu_id, menu_name, parent_id, order_num, path, component, query, route_name, is_frame, is_cache, menu_type, visible, status, perms, icon, create_by, create_time, update_by, update_time, remark)
-SELECT 3354, '互评记录', 3350, 4, 'evaluation', 'system/student/evaluation/index', '', '', 1, 0, 'C', '0', '0', 'student:evaluation:list', 'message', 'admin', SYSDATE(), '', NULL, ''
+SELECT 3354, '互评记录', 3350, 4, 'evaluation', 'system/student/evaluation/index', '', 'StudentEvaluation', 1, 0, 'C', '0', '0', 'student:evaluation:list', 'message', 'admin', SYSDATE(), '', NULL, ''
 WHERE NOT EXISTS (SELECT 1 FROM sys_menu WHERE menu_id = 3354);
 
 INSERT INTO sys_menu (menu_id, menu_name, parent_id, order_num, path, component, query, route_name, is_frame, is_cache, menu_type, visible, status, perms, icon, create_by, create_time, update_by, update_time, remark)
-SELECT 3380, '我的简历', 3350, 5, 'resume', 'system/student/resume/index', '', '', 1, 0, 'C', '0', '0', 'student:resume:query', 'form', 'admin', SYSDATE(), '', NULL, ''
+SELECT 3380, '我的简历', 3350, 5, 'resume', 'system/student/resume/index', '', 'StudentResume', 1, 0, 'C', '0', '0', 'student:resume:query', 'form', 'admin', SYSDATE(), '', NULL, ''
 WHERE NOT EXISTS (SELECT 1 FROM sys_menu WHERE menu_id = 3380);
 
 INSERT INTO sys_menu (menu_id, menu_name, parent_id, order_num, path, component, query, route_name, is_frame, is_cache, menu_type, visible, status, perms, icon, create_by, create_time, update_by, update_time, remark)
-SELECT 3385, '个人信息', 3350, 6, 'info', 'system/student/info/index', '', '', 1, 0, 'C', '0', '0', 'student:info:query', 'user', 'admin', SYSDATE(), '', NULL, ''
+SELECT 3385, '个人信息', 3350, 6, 'info', 'system/student/info/index', '', 'StudentInfo', 1, 0, 'C', '0', '0', 'student:info:query', 'user', 'admin', SYSDATE(), '', NULL, ''
 WHERE NOT EXISTS (SELECT 1 FROM sys_menu WHERE menu_id = 3385);
 
 INSERT INTO sys_menu (menu_id, menu_name, parent_id, order_num, path, component, query, route_name, is_frame, is_cache, menu_type, visible, status, perms, icon, create_by, create_time, update_by, update_time, remark)
-SELECT 3388, '平台公告', 3350, 7, 'notice', 'system/student/notice/index', '', '', 1, 0, 'C', '0', '0', 'student:notice:list', 'notice', 'admin', SYSDATE(), '', NULL, ''
+SELECT 3388, '平台公告', 3350, 7, 'notice', 'system/student/notice/index', '', 'StudentNotice', 1, 0, 'C', '0', '0', 'student:notice:list', 'notice', 'admin', SYSDATE(), '', NULL, ''
 WHERE NOT EXISTS (SELECT 1 FROM sys_menu WHERE menu_id = 3388);
 
 -- 岗位浏览按钮
@@ -229,7 +229,7 @@ WHERE NOT EXISTS (SELECT 1 FROM sys_menu WHERE menu_id = 3370);
 
 -- 企业资质审核页面
 INSERT INTO sys_menu (menu_id, menu_name, parent_id, order_num, path, component, query, route_name, is_frame, is_cache, menu_type, visible, status, perms, icon, create_by, create_time, update_by, update_time, remark)
-SELECT 3371, '企业资质审核', 3370, 1, 'enterprise', 'system/admin/enterpriseAudit/index', '', '', 1, 0, 'C', '0', '0', 'admin:enterprise:audit:list', 'form', 'admin', SYSDATE(), '', NULL, ''
+SELECT 3371, '企业资质审核', 3370, 1, 'enterprise', 'system/admin/enterpriseAudit/index', '', 'AdminEnterpriseAudit', 1, 0, 'C', '0', '0', 'admin:enterprise:audit:list', 'form', 'admin', SYSDATE(), '', NULL, ''
 WHERE NOT EXISTS (SELECT 1 FROM sys_menu WHERE menu_id = 3371);
 
 INSERT INTO sys_menu (menu_id, menu_name, parent_id, order_num, path, component, query, route_name, is_frame, is_cache, menu_type, visible, status, perms, icon, create_by, create_time, update_by, update_time, remark)
@@ -246,7 +246,7 @@ WHERE NOT EXISTS (SELECT 1 FROM sys_menu WHERE menu_id = 3374);
 
 -- 岗位监管页面
 INSERT INTO sys_menu (menu_id, menu_name, parent_id, order_num, path, component, query, route_name, is_frame, is_cache, menu_type, visible, status, perms, icon, create_by, create_time, update_by, update_time, remark)
-SELECT 3390, '岗位监管', 3370, 2, 'jobReview', 'system/admin/jobReview/index', '', '', 1, 0, 'C', '0', '0', 'admin:job-review:list', 'job', 'admin', SYSDATE(), '', NULL, ''
+SELECT 3390, '岗位监管', 3370, 2, 'jobReview', 'system/admin/jobReview/index', '', 'AdminJobReview', 1, 0, 'C', '0', '0', 'admin:job-review:list', 'job', 'admin', SYSDATE(), '', NULL, ''
 WHERE NOT EXISTS (SELECT 1 FROM sys_menu WHERE menu_id = 3390);
 
 INSERT INTO sys_menu (menu_id, menu_name, parent_id, order_num, path, component, query, route_name, is_frame, is_cache, menu_type, visible, status, perms, icon, create_by, create_time, update_by, update_time, remark)
@@ -259,7 +259,7 @@ WHERE NOT EXISTS (SELECT 1 FROM sys_menu WHERE menu_id = 3392);
 
 -- 运营统计页面
 INSERT INTO sys_menu (menu_id, menu_name, parent_id, order_num, path, component, query, route_name, is_frame, is_cache, menu_type, visible, status, perms, icon, create_by, create_time, update_by, update_time, remark)
-SELECT 3400, '运营统计', 3370, 3, 'stat', 'system/admin/stat/index', '', '', 1, 0, 'C', '0', '0', 'admin:stat:query', 'chart', 'admin', SYSDATE(), '', NULL, ''
+SELECT 3400, '运营统计', 3370, 3, 'stat', 'system/admin/stat/index', '', 'AdminStat', 1, 0, 'C', '0', '0', 'admin:stat:query', 'chart', 'admin', SYSDATE(), '', NULL, ''
 WHERE NOT EXISTS (SELECT 1 FROM sys_menu WHERE menu_id = 3400);
 
 -- ============================================================

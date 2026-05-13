@@ -55,6 +55,12 @@ public class JobApplication extends BaseEntity
     @Excel(name = "企业标记完成时间", width = 30, dateFormat = "yyyy-MM-dd")
     private Date completeTime;
 
+    /** 岗位名称（关联查询） */
+    private String postName;
+
+    /** 企业名称（关联查询） */
+    private String enterpriseName;
+
     /** 删除标志（0存在 2删除） */
     private String delFlag;
 
@@ -148,14 +154,34 @@ public class JobApplication extends BaseEntity
         return completeTime;
     }
 
-    public void setDelFlag(String delFlag) 
+    public void setDelFlag(String delFlag)
     {
         this.delFlag = delFlag;
     }
 
-    public String getDelFlag() 
+    public String getDelFlag()
     {
         return delFlag;
+    }
+
+    public String getPostName()
+    {
+        return postName;
+    }
+
+    public void setPostName(String postName)
+    {
+        this.postName = postName;
+    }
+
+    public String getEnterpriseName()
+    {
+        return enterpriseName;
+    }
+
+    public void setEnterpriseName(String enterpriseName)
+    {
+        this.enterpriseName = enterpriseName;
     }
 
     @Override
@@ -175,6 +201,8 @@ public class JobApplication extends BaseEntity
             .append("updateBy", getUpdateBy())
             .append("updateTime", getUpdateTime())
             .append("remark", getRemark())
+            .append("postName", getPostName())
+            .append("enterpriseName", getEnterpriseName())
             .append("delFlag", getDelFlag())
             .toString();
     }

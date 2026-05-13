@@ -4,6 +4,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -32,6 +33,30 @@ public class StudentEvaluationController extends BaseController
         startPage();
         Long studentId = SecurityUtils.getUserId();
         List<JobEvaluation> list = studentFlowService.listMyEvaluations(studentId, query);
+        return getDataTable(list);
+    }
+
+    /**
+     * 查看某企业收到的评价（学生对企业的评价）
+     */
+    @GetMapping("/enterprise/{enterpriseId}")
+    public TableDataInfo enterpriseEvaluations(@PathVariable Long enterpriseId, JobEvaluation query)
+    {
+        startPage();
+        List<JobEvaluation> list = studentFlowService.listEnterpriseEvaluations(enterpriseId, query);
+        return getDataTable(list);
+    }
+
+    /**
+     * 查询收到的评价（企业对当前学生的评价）
+     */
+    @PreAuthorize("@ss.hasPermi('student:evaluation:list')")
+    @GetMapping("/about-me")
+    public TableDataInfo aboutMe(JobEvaluation query)
+    {
+        startPage();
+        Long studentId = SecurityUtils.getUserId();
+        List<JobEvaluation> list = studentFlowService.listEvaluationsAboutMe(studentId, query);
         return getDataTable(list);
     }
 

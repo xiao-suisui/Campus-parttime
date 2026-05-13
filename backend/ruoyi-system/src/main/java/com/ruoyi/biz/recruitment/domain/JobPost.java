@@ -56,6 +56,9 @@ public class JobPost extends BaseEntity
     @Excel(name = "工作时间描述")
     private String workTimeDesc;
 
+    /** 工作描述 */
+    private String postDesc;
+
     /** 岗位要求 */
     private String requirementDesc;
 
@@ -192,12 +195,22 @@ public class JobPost extends BaseEntity
         return workTimeDesc;
     }
 
-    public void setRequirementDesc(String requirementDesc) 
+    public void setPostDesc(String postDesc)
+    {
+        this.postDesc = postDesc;
+    }
+
+    public String getPostDesc()
+    {
+        return postDesc;
+    }
+
+    public void setRequirementDesc(String requirementDesc)
     {
         this.requirementDesc = requirementDesc;
     }
 
-    public String getRequirementDesc() 
+    public String getRequirementDesc()
     {
         return requirementDesc;
     }
@@ -325,6 +338,7 @@ public class JobPost extends BaseEntity
             .append("workAddress", getWorkAddress())
             .append("workType", getWorkType())
             .append("workTimeDesc", getWorkTimeDesc())
+            .append("postDesc", getPostDesc())
             .append("requirementDesc", getRequirementDesc())
             .append("recruitCount", getRecruitCount())
             .append("deadlineTime", getDeadlineTime())

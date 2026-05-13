@@ -16,6 +16,9 @@
             <view class="u_title">
               用户名：{{ name }}
             </view>
+            <view v-if="studentInfo.schoolName" class="u_school">
+              {{ studentInfo.schoolName }} · {{ studentInfo.majorName || '' }}
+            </view>
           </view>
         </view>
         <view @click="handleToInfo" class="flex align-center">
@@ -26,22 +29,46 @@
     </view>
 
     <view class="content-section">
+      <!-- 学生信息卡片 -->
+      <view v-if="name && studentInfo.schoolName" class="student-card" @click="handleToInfo">
+        <view class="card-row">
+          <view class="card-item">
+            <text class="card-label">学校</text>
+            <text class="card-value">{{ studentInfo.schoolName }}</text>
+          </view>
+          <view class="card-item">
+            <text class="card-label">专业</text>
+            <text class="card-value">{{ studentInfo.majorName || '未填写' }}</text>
+          </view>
+        </view>
+        <view class="card-row">
+          <view class="card-item">
+            <text class="card-label">学号</text>
+            <text class="card-value">{{ studentInfo.studentNo || '未填写' }}</text>
+          </view>
+          <view class="card-item">
+            <text class="card-label">年级</text>
+            <text class="card-value">{{ studentInfo.gradeYear ? studentInfo.gradeYear + '级' : '未填写' }}</text>
+          </view>
+        </view>
+      </view>
+
       <view class="mine-actions grid col-4 text-center">
-        <view class="action-item" @click="handleJiaoLiuQun">
-          <view class="iconfont icon-friendfill text-pink icon"></view>
-          <text class="text">交流群</text>
+        <view class="action-item" @click="handleToApplication">
+          <view class="iconfont icon-community text-blue icon"></view>
+          <text class="text">我的投递</text>
         </view>
-        <view class="action-item" @click="handleBuilding">
-          <view class="iconfont icon-service text-blue icon"></view>
-          <text class="text">在线客服</text>
+        <view class="action-item" @click="handleToCollection">
+          <view class="iconfont icon-aixin text-red icon"></view>
+          <text class="text">我的收藏</text>
         </view>
-        <view class="action-item" @click="handleBuilding">
-          <view class="iconfont icon-community text-mauve icon"></view>
-          <text class="text">反馈社区</text>
+        <view class="action-item" @click="handleToResume">
+          <view class="iconfont icon-edit text-green icon"></view>
+          <text class="text">我的简历</text>
         </view>
-        <view class="action-item" @click="handleBuilding">
-          <view class="iconfont icon-dianzan text-green icon"></view>
-          <text class="text">点赞我们</text>
+        <view class="action-item" @click="handleToEvaluation">
+          <view class="iconfont icon-dianzan text-orange icon"></view>
+          <text class="text">互评记录</text>
         </view>
       </view>
 
@@ -52,10 +79,10 @@
             <view>编辑资料</view>
           </view>
         </view>
-        <view class="list-cell list-cell-arrow" @click="handleHelp">
+        <view class="list-cell list-cell-arrow" @click="handleToPwd">
           <view class="menu-item-box">
-            <view class="iconfont icon-help menu-icon"></view>
-            <view>常见问题</view>
+            <view class="iconfont icon-password menu-icon"></view>
+            <view>修改密码</view>
           </view>
         </view>
         <view class="list-cell list-cell-arrow" @click="handleAbout">
@@ -77,10 +104,13 @@
 </template>
 
 <script>
+  import { getStudentInfo } from '@/api/student/info'
+
   export default {
     data() {
       return {
-        name: this.$store.state.user.name
+        name: this.$store.state.user.name,
+        studentInfo: {}
       }
     },
     computed: {
@@ -91,7 +121,19 @@
         return uni.getSystemInfoSync().windowHeight - 50
       }
     },
+    onShow() {
+      if (this.name) {
+        this.loadStudentInfo()
+      }
+    },
     methods: {
+      loadStudentInfo() {
+        getStudentInfo().then(res => {
+          if (res.data) {
+            this.studentInfo = res.data
+          }
+        })
+      },
       handleToInfo() {
         this.$tab.navigateTo('/pages/mine/info/index')
       },
@@ -107,17 +149,23 @@
       handleToAvatar() {
         this.$tab.navigateTo('/pages/mine/avatar/index')
       },
-      handleHelp() {
-        this.$tab.navigateTo('/pages/mine/help/index')
+      handleToPwd() {
+        this.$tab.navigateTo('/pages/mine/pwd/index')
       },
       handleAbout() {
         this.$tab.navigateTo('/pages/mine/about/index')
       },
-      handleJiaoLiuQun() {
-        this.$modal.showToast('QQ群：①133713780(满)、②146013835(满)、③189091635')
+      handleToApplication() {
+        this.$tab.navigateTo('/pages/student/application/list')
       },
-      handleBuilding() {
-        this.$modal.showToast('模块建设中~')
+      handleToCollection() {
+        this.$tab.navigateTo('/pages/student/collection/list')
+      },
+      handleToResume() {
+        this.$tab.navigateTo('/pages/student/resume/index')
+      },
+      handleToEvaluation() {
+        this.$tab.navigateTo('/pages/student/evaluation/list')
       }
     }
   }
@@ -135,7 +183,7 @@
 
     .header-section {
       padding: 15px 15px 45px 15px;
-      background-color: #3c96f3;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
       color: white;
 
       .login-tip {
@@ -158,12 +206,52 @@
           font-size: 18px;
           line-height: 30px;
         }
+
+        .u_school {
+          font-size: 13px;
+          opacity: 0.85;
+          margin-top: 2px;
+        }
       }
     }
 
     .content-section {
       position: relative;
       top: -50px;
+
+      .student-card {
+        margin: 0 15px 10px;
+        padding: 20px;
+        border-radius: 8px;
+        background-color: white;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+
+        .card-row {
+          display: flex;
+          margin-bottom: 12px;
+
+          &:last-child {
+            margin-bottom: 0;
+          }
+        }
+
+        .card-item {
+          flex: 1;
+
+          .card-label {
+            font-size: 12px;
+            color: #999;
+            display: block;
+            margin-bottom: 4px;
+          }
+
+          .card-value {
+            font-size: 14px;
+            color: #333;
+            font-weight: 500;
+          }
+        }
+      }
 
       .mine-actions {
         margin: 15px 15px;

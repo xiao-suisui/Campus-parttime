@@ -15,6 +15,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="workAddress"    column="work_address"    />
         <result property="workType"    column="work_type"    />
         <result property="workTimeDesc"    column="work_time_desc"    />
+        <result property="postDesc"    column="post_desc"    />
         <result property="requirementDesc"    column="requirement_desc"    />
         <result property="recruitCount"    column="recruit_count"    />
         <result property="deadlineTime"    column="deadline_time"    />
@@ -35,7 +36,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </resultMap>
 
     <sql id="selectJobPostVo">
-        select post_id, enterprise_id, post_name, salary_min, salary_max, salary_unit, work_location_type, work_address, work_type, work_time_desc, requirement_desc, recruit_count, deadline_time, contact_name, contact_phone, post_status, view_count, collect_count, apply_count, hire_count, complete_count, create_by, create_time, update_by, update_time, remark, del_flag from t_job_post
+        select post_id, enterprise_id, post_name, salary_min, salary_max, salary_unit, work_location_type, work_address, work_type, work_time_desc, post_desc, requirement_desc, recruit_count, deadline_time, contact_name, contact_phone, post_status, view_count, collect_count, apply_count, hire_count, complete_count, create_by, create_time, update_by, update_time, remark, del_flag from t_job_post
     </sql>
 
     <select id="selectJobPostList" parameterType="JobPost" resultMap="JobPostResult">
@@ -44,6 +45,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="enterpriseId != null"> and enterprise_id = #{enterpriseId}</if>
             <if test="postName != null  and postName != ''"> and post_name like concat('%', #{postName}, '%')</if>
             <if test="workType != null  and workType != ''"> and work_type = #{workType}</if>
+            <if test="salaryUnit != null and salaryUnit != ''"> and salary_unit = #{salaryUnit}</if>
+            <if test="workLocationType != null and workLocationType != ''"> and work_location_type = #{workLocationType}</if>
             <if test="params.beginDeadlineTime != null and params.beginDeadlineTime != '' and params.endDeadlineTime != null and params.endDeadlineTime != ''"> and deadline_time between #{params.beginDeadlineTime} and #{params.endDeadlineTime}</if>
             <if test="postStatus != null  and postStatus != ''"> and post_status = #{postStatus}</if>
         </where>
@@ -66,6 +69,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="workAddress != null and workAddress != ''">work_address,</if>
             <if test="workType != null and workType != ''">work_type,</if>
             <if test="workTimeDesc != null and workTimeDesc != ''">work_time_desc,</if>
+            <if test="postDesc != null">post_desc,</if>
             <if test="requirementDesc != null">requirement_desc,</if>
             <if test="recruitCount != null">recruit_count,</if>
             <if test="deadlineTime != null">deadline_time,</if>
@@ -94,6 +98,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="workAddress != null and workAddress != ''">#{workAddress},</if>
             <if test="workType != null and workType != ''">#{workType},</if>
             <if test="workTimeDesc != null and workTimeDesc != ''">#{workTimeDesc},</if>
+            <if test="postDesc != null">#{postDesc},</if>
             <if test="requirementDesc != null">#{requirementDesc},</if>
             <if test="recruitCount != null">#{recruitCount},</if>
             <if test="deadlineTime != null">#{deadlineTime},</if>
@@ -126,6 +131,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="workAddress != null and workAddress != ''">work_address = #{workAddress},</if>
             <if test="workType != null and workType != ''">work_type = #{workType},</if>
             <if test="workTimeDesc != null and workTimeDesc != ''">work_time_desc = #{workTimeDesc},</if>
+            <if test="postDesc != null">post_desc = #{postDesc},</if>
             <if test="requirementDesc != null">requirement_desc = #{requirementDesc},</if>
             <if test="recruitCount != null">recruit_count = #{recruitCount},</if>
             <if test="deadlineTime != null">deadline_time = #{deadlineTime},</if>

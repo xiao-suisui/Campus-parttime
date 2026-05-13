@@ -7,8 +7,8 @@
 
     <!-- 筛选条件 -->
     <view class="filter-bar">
-      <uni-data-select v-model="queryParams.settlementMethod" :localdata="settlementOptions" placeholder="结算方式" @change="onFilter" />
-      <uni-data-select v-model="queryParams.workLocationType" :localdata="locationOptions" placeholder="工作地点" @change="onFilter" />
+      <uni-data-select v-model="queryParams.salaryUnit" :localdata="settlementOptions" placeholder="结算方式" @change="onFilter" clearable />
+      <uni-data-select v-model="queryParams.workLocationType" :localdata="locationOptions" placeholder="工作地点" @change="onFilter" clearable />
     </view>
 
     <!-- 推荐区域 -->
@@ -17,7 +17,7 @@
       <scroll-view scroll-x class="recommend-scroll">
         <view v-for="item in recommendList" :key="item.postId" class="recommend-card" @click="goDetail(item.postId)">
           <view class="recommend-name">{{ item.postName }}</view>
-          <view class="recommend-salary">{{ item.salaryMin }}-{{ item.salaryMax }}元/{{ item.salaryUnit }}</view>
+          <view class="recommend-salary">{{ item.salaryMin }}-{{ item.salaryMax }}元/{{ formatSalaryUnit(item.salaryUnit) }}</view>
           <view class="recommend-addr">{{ item.workAddress }}</view>
         </view>
       </scroll-view>
@@ -28,11 +28,11 @@
       <view v-for="item in postList" :key="item.postId" class="post-card" @click="goDetail(item.postId)">
         <view class="post-header">
           <text class="post-name">{{ item.postName }}</text>
-          <text class="post-salary">{{ item.salaryMin }}-{{ item.salaryMax }}元/{{ item.salaryUnit }}</text>
+          <text class="post-salary">{{ item.salaryMin }}-{{ item.salaryMax }}元/{{ formatSalaryUnit(item.salaryUnit) }}</text>
         </view>
         <view class="post-tags">
-          <uni-tag :text="item.workType" type="primary" size="small" />
-          <uni-tag :text="item.workLocationType" type="success" size="small" />
+          <uni-tag :text="formatWorkType(item.workType)" type="primary" size="small" />
+          <uni-tag :text="formatLocationType(item.workLocationType)" type="success" size="small" />
         </view>
         <view class="post-footer">
           <text class="post-addr">{{ item.workAddress }}</text>
@@ -61,19 +61,18 @@ export default {
         pageNum: 1,
         pageSize: 10,
         postName: '',
-        settlementMethod: '',
+        salaryUnit: '',
         workLocationType: ''
       },
       settlementOptions: [
-        { value: '日结', text: '日结' },
-        { value: '周结', text: '周结' },
-        { value: '月结', text: '月结' },
-        { value: '完工结算', text: '完工结算' }
+        { value: '1', text: '日结' },
+        { value: '2', text: '周结' },
+        { value: '3', text: '月结' }
       ],
       locationOptions: [
-        { value: '线上', text: '线上' },
-        { value: '线下', text: '线下' },
-        { value: '不限', text: '不限' }
+        { value: '1', text: '校内' },
+        { value: '2', text: '校外' },
+        { value: '3', text: '远程' }
       ],
       hasMore: true
     }
@@ -96,6 +95,18 @@ export default {
     }
   },
   methods: {
+    formatSalaryUnit(unit) {
+      const map = { '1': '日结', '2': '周结', '3': '月结' }
+      return map[unit] || unit || ''
+    },
+    formatWorkType(type) {
+      const map = { '1': '短期', '2': '长期', '3': '实习' }
+      return map[type] || type || ''
+    },
+    formatLocationType(type) {
+      const map = { '1': '校内', '2': '校外', '3': '远程' }
+      return map[type] || type || ''
+    },
     loadRecommend() {
       getRecommendPosts(8).then(res => {
         this.recommendList = res.data || []

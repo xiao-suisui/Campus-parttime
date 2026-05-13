@@ -14,6 +14,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="processTime"    column="process_time"    />
         <result property="enterpriseRemark"    column="enterprise_remark"    />
         <result property="completeTime"    column="complete_time"    />
+        <result property="postName"    column="post_name"    />
+        <result property="enterpriseName"    column="enterprise_name"    />
         <result property="createBy"    column="create_by"    />
         <result property="createTime"    column="create_time"    />
         <result property="updateBy"    column="update_by"    />
@@ -23,22 +25,29 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </resultMap>
 
     <sql id="selectJobApplicationVo">
-        select application_id, post_id, student_id, resume_id, apply_time, application_status, process_time, enterprise_remark, complete_time, create_by, create_time, update_by, update_time, remark, del_flag from t_job_application
+        select a.application_id, a.post_id, a.student_id, a.resume_id, a.apply_time, a.application_status,
+               a.process_time, a.enterprise_remark, a.complete_time,
+               p.post_name, e.enterprise_name,
+               a.create_by, a.create_time, a.update_by, a.update_time, a.remark, a.del_flag
+        from t_job_application a
+        left join t_job_post p on a.post_id = p.post_id
+        left join t_enterprise_info e on p.enterprise_id = e.enterprise_id
     </sql>
 
     <select id="selectJobApplicationList" parameterType="JobApplication" resultMap="JobApplicationResult">
         <include refid="selectJobApplicationVo"/>
-        <where>  
-            <if test="postId != null "> and post_id = #{postId}</if>
-            <if test="studentId != null "> and student_id = #{studentId}</if>
-            <if test="params.beginApplyTime != null and params.beginApplyTime != '' and params.endApplyTime != null and params.endApplyTime != ''"> and apply_time between #{params.beginApplyTime} and #{params.endApplyTime}</if>
-            <if test="applicationStatus != null  and applicationStatus != ''"> and application_status = #{applicationStatus}</if>
+        <where>
+            <if test="postId != null "> and a.post_id = #{postId}</if>
+            <if test="studentId != null "> and a.student_id = #{studentId}</if>
+            <if test="params.beginApplyTime != null and params.beginApplyTime != '' and params.endApplyTime != null and params.endApplyTime != ''"> and a.apply_time between #{params.beginApplyTime} and #{params.endApplyTime}</if>
+            <if test="applicationStatus != null  and applicationStatus != ''"> and a.application_status = #{applicationStatus}</if>
         </where>
+        order by a.apply_time desc
     </select>
     
     <select id="selectJobApplicationByApplicationId" parameterType="Long" resultMap="JobApplicationResult">
         <include refid="selectJobApplicationVo"/>
-        where application_id = #{applicationId}
+        where a.application_id = #{applicationId}
     </select>
 
     <insert id="insertJobApplication" parameterType="JobApplication" useGeneratedKeys="true" keyProperty="applicationId">
@@ -112,9 +121,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <select id="selectApplicationListByEnterpriseId" resultMap="JobApplicationResult">
         select a.application_id, a.post_id, a.student_id, a.resume_id, a.apply_time,
                a.application_status, a.process_time, a.enterprise_remark, a.complete_time,
+               p.post_name, e.enterprise_name,
                a.create_by, a.create_time, a.update_by, a.update_time, a.remark, a.del_flag
         from t_job_application a
         inner join t_job_post p on a.post_id = p.post_id and p.enterprise_id = #{enterpriseId} and p.del_flag = '0'
+        left join t_enterprise_info e on p.enterprise_id = e.enterprise_id
         <where>
             <if test="applicationStatus != null and applicationStatus != ''">
                 and a.application_status = #{applicationStatus}

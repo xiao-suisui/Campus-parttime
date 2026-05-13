@@ -31,6 +31,7 @@ public class StudentFlowServiceImpl implements IStudentFlowService
     private static final String DEL_FLAG_DELETED = "2";
     private static final String APPLICATION_STATUS_COMPLETED = "2";
     private static final String EVALUATION_TYPE_STUDENT_TO_ENTERPRISE = "1";
+    private static final String EVALUATION_TYPE_ENTERPRISE_TO_STUDENT = "2";
     private static final String RESUME_STATUS_ACTIVE = "0";
 
     @Autowired
@@ -189,10 +190,13 @@ public class StudentFlowServiceImpl implements IStudentFlowService
             throw new ServiceException("仅企业标记完成后可互评");
         }
 
+        JobPost post = jobPostService.selectJobPostByPostId(application.getPostId());
+
         JobEvaluation evaluation = new JobEvaluation();
         evaluation.setApplicationId(applicationId);
         evaluation.setPostId(application.getPostId());
         evaluation.setStudentId(studentId);
+        evaluation.setEnterpriseId(post.getEnterpriseId());
         evaluation.setEvaluationType(EVALUATION_TYPE_STUDENT_TO_ENTERPRISE);
         evaluation.setScore(score);
         evaluation.setContent(content);
@@ -215,6 +219,25 @@ public class StudentFlowServiceImpl implements IStudentFlowService
         JobEvaluation condition = query == null ? new JobEvaluation() : query;
         condition.setStudentId(studentId);
         condition.setEvaluationType(EVALUATION_TYPE_STUDENT_TO_ENTERPRISE);
+        return jobEvaluationService.selectJobEvaluationList(condition);
+    }
+
+    @Override
+    public List<JobEvaluation> listEnterpriseEvaluations(Long enterpriseId, JobEvaluation query)
+    {
+        JobEvaluation condition = query == null ? new JobEvaluation() : query;
+        condition.setEnterpriseId(enterpriseId);
+        condition.setEvaluationType(EVALUATION_TYPE_STUDENT_TO_ENTERPRISE);
+        return jobEvaluationService.selectJobEvaluationList(condition);
+    }
+
+    @Override
+    public List<JobEvaluation> listEvaluationsAboutMe(Long studentId, JobEvaluation query)
+    {
+        ensureStudentValid(studentId);
+        JobEvaluation condition = query == null ? new JobEvaluation() : query;
+        condition.setEvaluationType(EVALUATION_TYPE_ENTERPRISE_TO_STUDENT);
+        condition.setStudentId(studentId);
         return jobEvaluationService.selectJobEvaluationList(condition);
     }
 

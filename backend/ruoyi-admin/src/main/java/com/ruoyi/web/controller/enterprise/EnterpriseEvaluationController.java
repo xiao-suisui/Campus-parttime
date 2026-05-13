@@ -32,7 +32,7 @@ public class EnterpriseEvaluationController extends BaseController
     private IEnterpriseFlowService enterpriseFlowService;
 
     /**
-     * 查询评价列表
+     * 查询评价列表（企业发出的）
      */
     @PreAuthorize("@ss.hasPermi('enterprise:evaluation:list')")
     @GetMapping("/list")
@@ -41,6 +41,19 @@ public class EnterpriseEvaluationController extends BaseController
         startPage();
         Long enterpriseId = SecurityUtils.getUserId();
         List<JobEvaluation> list = enterpriseFlowService.listMyEvaluations(enterpriseId, query);
+        return getDataTable(list);
+    }
+
+    /**
+     * 查询收到的评价（学生对本企业的评价）
+     */
+    @PreAuthorize("@ss.hasPermi('enterprise:evaluation:list')")
+    @GetMapping("/about-me")
+    public TableDataInfo aboutMe(JobEvaluation query)
+    {
+        startPage();
+        Long enterpriseId = SecurityUtils.getUserId();
+        List<JobEvaluation> list = enterpriseFlowService.listEvaluationsAboutMe(enterpriseId, query);
         return getDataTable(list);
     }
 

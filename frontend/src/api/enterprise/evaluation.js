@@ -16,3 +16,11 @@ export function addEnterpriseEvaluation(data) {
   })
 }
 
+export function listEvaluationsAboutMe(query) {
+  return request({
+    url: '/enterprise/evaluation/about-me',
+    method: 'get',
+    params: query
+  })
+}
+

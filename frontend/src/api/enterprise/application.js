@@ -38,3 +38,10 @@ export function rejectEnterpriseApplication(applicationId, data) {
     data: data
   })
 }
+
+export function getApplicationResume(applicationId) {
+  return request({
+    url: '/enterprise/application/' + applicationId + '/resume',
+    method: 'get'
+  })
+}

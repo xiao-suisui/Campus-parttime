@@ -4,8 +4,10 @@ import java.util.Date;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import com.ruoyi.biz.recruitment.domain.JobPost;
 import com.ruoyi.biz.recruitment.service.IJobPostService;
+import com.ruoyi.common.core.domain.entity.SysRole;
 import com.ruoyi.common.exception.ServiceException;
 import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.biz.enterprise.service.IEnterpriseFlowService;
@@ -15,6 +17,10 @@ import com.ruoyi.biz.recruitment.domain.JobEvaluation;
 import com.ruoyi.biz.enterprise.service.IEnterpriseInfoService;
 import com.ruoyi.biz.recruitment.service.IJobApplicationService;
 import com.ruoyi.biz.recruitment.service.IJobEvaluationService;
+import com.ruoyi.biz.student.domain.StudentResume;
+import com.ruoyi.biz.student.service.IStudentResumeService;
+import com.ruoyi.system.mapper.SysRoleMapper;
+import com.ruoyi.system.service.ISysUserService;
 
 /**
  * Enterprise-side business flow implementation.
@@ -43,6 +49,15 @@ public class EnterpriseFlowServiceImpl implements IEnterpriseFlowService
 
     @Autowired
     private IJobEvaluationService jobEvaluationService;
+
+    @Autowired
+    private IStudentResumeService studentResumeService;
+
+    @Autowired
+    private SysRoleMapper roleMapper;
+
+    @Autowired
+    private ISysUserService userService;
 
     @Override
     public EnterpriseInfo getMyProfile(Long enterpriseId)
@@ -267,6 +282,32 @@ public class EnterpriseFlowServiceImpl implements IEnterpriseFlowService
     }
 
     @Override
+    public StudentResume getApplicationResume(Long enterpriseId, Long applicationId)
+    {
+        JobApplication application = getMyApplication(enterpriseId, applicationId);
+        if (application.getResumeId() == null)
+        {
+            throw new ServiceException("该投递未关联简历");
+        }
+        StudentResume resume = studentResumeService.selectStudentResumeByResumeId(application.getResumeId());
+        if (resume == null)
+        {
+            throw new ServiceException("简历不存在");
+        }
+        return resume;
+    }
+
+    @Override
+    public List<JobEvaluation> listEvaluationsAboutMe(Long enterpriseId, JobEvaluation query)
+    {
+        ensureEnterpriseApproved(enterpriseId);
+        JobEvaluation condition = query == null ? new JobEvaluation() : query;
+        condition.setEvaluationType("1");
+        condition.setEnterpriseId(enterpriseId);
+        return jobEvaluationService.selectJobEvaluationList(condition);
+    }
+
+    @Override
     public List<EnterpriseInfo> listEnterpriseForAudit(EnterpriseInfo query)
     {
         EnterpriseInfo condition = query == null ? new EnterpriseInfo() : query;
@@ -285,6 +326,7 @@ public class EnterpriseFlowServiceImpl implements IEnterpriseFlowService
     }
 
     @Override
+    @Transactional
     public int passEnterpriseAudit(Long auditorId, Long enterpriseId)
     {
         EnterpriseInfo current = getEnterpriseForAudit(enterpriseId);
@@ -294,7 +336,28 @@ public class EnterpriseFlowServiceImpl implements IEnterpriseFlowService
         update.setAuditReason(null);
         update.setAuditBy(auditorId);
         update.setAuditTime(DateUtils.getNowDate());
-        return enterpriseInfoService.updateEnterpriseInfo(update);
+        int rows = enterpriseInfoService.updateEnterpriseInfo(update);
+
+        // 审核通过后，将用户角色从 enterprise_pending 切换为 enterprise
+        if (rows > 0)
+        {
+            switchEnterpriseRole(enterpriseId, "enterprise_pending", "enterprise");
+        }
+        return rows;
+    }
+
+    /**
+     * 切换企业用户角色
+     */
+    private void switchEnterpriseRole(Long userId, String fromRoleKey, String toRoleKey)
+    {
+        // 查询目标角色（使用 Mapper 直接查询，避免数据权限切面）
+        SysRole role = roleMapper.checkRoleKeyUnique(toRoleKey);
+        if (role != null)
+        {
+            Long roleId = role.getRoleId();
+            userService.insertUserAuth(userId, new Long[]{ roleId });
+        }
     }
 
     @Override

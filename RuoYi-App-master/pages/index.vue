@@ -48,7 +48,7 @@
             <text class="rec-name">{{ item.postName }}</text>
             <text class="rec-addr">{{ item.workAddress }}</text>
           </view>
-          <text class="rec-salary">{{ item.salaryMin }}-{{ item.salaryMax }}元/{{ item.salaryUnit }}</text>
+          <text class="rec-salary">{{ item.salaryMin }}-{{ item.salaryMax }}元/{{ formatSalaryUnit(item.salaryUnit) }}</text>
         </view>
       </view>
     </view>
@@ -64,11 +64,11 @@
           <view class="post-info">
             <text class="post-name">{{ item.postName }}</text>
             <view class="post-tags">
-              <uni-tag :text="item.workType" type="primary" size="small" />
-              <uni-tag :text="item.workLocationType" type="success" size="small" />
+              <uni-tag :text="formatWorkType(item.workType)" type="primary" size="small" />
+              <uni-tag :text="formatLocationType(item.workLocationType)" type="success" size="small" />
             </view>
           </view>
-          <text class="post-salary">{{ item.salaryMin }}-{{ item.salaryMax }}元/{{ item.salaryUnit }}</text>
+          <text class="post-salary">{{ item.salaryMin }}-{{ item.salaryMax }}元/{{ formatSalaryUnit(item.salaryUnit) }}</text>
         </view>
       </view>
     </view>
@@ -92,6 +92,18 @@ export default {
     this.loadData()
   },
   methods: {
+    formatSalaryUnit(unit) {
+      const map = { '1': '日结', '2': '周结', '3': '月结' }
+      return map[unit] || unit || ''
+    },
+    formatWorkType(type) {
+      const map = { '1': '短期', '2': '长期', '3': '实习' }
+      return map[type] || type || ''
+    },
+    formatLocationType(type) {
+      const map = { '1': '校内', '2': '校外', '3': '远程' }
+      return map[type] || type || ''
+    },
     loadData() {
       Promise.all([
         getRecommendPosts(4),

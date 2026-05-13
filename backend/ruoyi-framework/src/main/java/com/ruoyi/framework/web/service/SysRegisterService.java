@@ -1,10 +1,13 @@
 package com.ruoyi.framework.web.service;
 
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 import com.ruoyi.common.constant.CacheConstants;
 import com.ruoyi.common.constant.Constants;
 import com.ruoyi.common.constant.UserConstants;
+import com.ruoyi.common.core.domain.entity.SysRole;
 import com.ruoyi.common.core.domain.entity.SysUser;
 import com.ruoyi.common.core.domain.model.RegisterBody;
 import com.ruoyi.common.core.redis.RedisCache;
@@ -16,6 +19,9 @@ import com.ruoyi.common.utils.SecurityUtils;
 import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.framework.manager.AsyncManager;
 import com.ruoyi.framework.manager.factory.AsyncFactory;
+import com.ruoyi.biz.student.domain.StudentInfo;
+import com.ruoyi.biz.student.service.IStudentInfoService;
+import com.ruoyi.system.mapper.SysRoleMapper;
 import com.ruoyi.system.service.ISysConfigService;
 import com.ruoyi.system.service.ISysUserService;
 
@@ -36,9 +42,16 @@ public class SysRegisterService
     @Autowired
     private RedisCache redisCache;
 
+    @Autowired
+    private SysRoleMapper roleMapper;
+
+    @Autowired
+    private IStudentInfoService studentInfoService;
+
     /**
      * 注册
      */
+    @Transactional
     public String register(RegisterBody registerBody)
     {
         String msg = "", username = registerBody.getUsername(), password = registerBody.getPassword();
@@ -86,10 +99,59 @@ public class SysRegisterService
             }
             else
             {
+                // 根据用户类型分配角色和创建关联信息
+                String userType = registerBody.getUserType();
+                if ("student".equals(userType))
+                {
+                    // 学生注册：分配学生角色并创建学生信息
+                    assignRoleToUser(sysUser.getUserId(), "student");
+                    createStudentInfo(sysUser.getUserId(), registerBody);
+                }
+                else if ("enterprise".equals(userType))
+                {
+                    // 企业注册：分配待审核企业角色
+                    assignRoleToUser(sysUser.getUserId(), "enterprise_pending");
+                }
+                else
+                {
+                    // 默认：分配待审核企业角色（兼容旧版注册）
+                    assignRoleToUser(sysUser.getUserId(), "enterprise_pending");
+                }
                 AsyncManager.me().execute(AsyncFactory.recordLogininfor(username, Constants.REGISTER, MessageUtils.message("user.register.success")));
             }
         }
         return msg;
+    }
+
+    /**
+     * 为用户分配角色
+     */
+    private void assignRoleToUser(Long userId, String roleKey)
+    {
+        SysRole role = roleMapper.checkRoleKeyUnique(roleKey);
+        if (role != null)
+        {
+            Long roleId = role.getRoleId();
+            userService.insertUserAuth(userId, new Long[]{ roleId });
+        }
+    }
+
+    /**
+     * 创建学生信息
+     */
+    private void createStudentInfo(Long userId, RegisterBody registerBody)
+    {
+        if (StringUtils.isNotEmpty(registerBody.getRealName()))
+        {
+            StudentInfo studentInfo = new StudentInfo();
+            studentInfo.setStudentId(userId);
+            studentInfo.setRealName(registerBody.getRealName());
+            studentInfo.setStudentNo(registerBody.getStudentNo());
+            studentInfo.setSchoolName(registerBody.getSchool());
+            studentInfo.setMajorName(registerBody.getMajor());
+            studentInfo.setDelFlag("0");
+            studentInfoService.insertStudentInfo(studentInfo);
+        }
     }
 
     /**

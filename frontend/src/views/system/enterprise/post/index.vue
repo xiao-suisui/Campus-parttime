@@ -121,6 +121,9 @@
         <el-form-item label="岗位要求" prop="requirementDesc">
           <el-input v-model="form.requirementDesc" type="textarea" :rows="4" placeholder="请输入岗位要求" />
         </el-form-item>
+        <el-form-item label="工作描述" prop="postDesc">
+          <el-input v-model="form.postDesc" type="textarea" :rows="4" placeholder="请输入工作具体内容描述" />
+        </el-form-item>
         <el-row :gutter="20">
           <el-col :span="12">
             <el-form-item label="联系人" prop="contactName">
@@ -159,6 +162,7 @@
         <el-descriptions-item label="招聘人数">{{ detailForm.recruitCount }}</el-descriptions-item>
         <el-descriptions-item label="工作时间" :span="2">{{ detailForm.workTimeDesc }}</el-descriptions-item>
         <el-descriptions-item label="岗位要求" :span="2">{{ detailForm.requirementDesc }}</el-descriptions-item>
+        <el-descriptions-item label="工作描述" :span="2">{{ detailForm.postDesc }}</el-descriptions-item>
         <el-descriptions-item label="联系人">{{ detailForm.contactName }}</el-descriptions-item>
         <el-descriptions-item label="联系电话">{{ detailForm.contactPhone }}</el-descriptions-item>
         <el-descriptions-item label="截止时间">{{ parseTime(detailForm.deadlineTime) }}</el-descriptions-item>
@@ -246,6 +250,7 @@ export default {
         workAddress: undefined,
         workType: undefined,
         workTimeDesc: undefined,
+        postDesc: undefined,
         requirementDesc: undefined,
         recruitCount: 1,
         deadlineTime: undefined,

@@ -33,6 +33,10 @@ public interface IStudentFlowService
 
     List<JobEvaluation> listMyEvaluations(Long studentId, JobEvaluation query);
 
+    List<JobEvaluation> listEnterpriseEvaluations(Long enterpriseId, JobEvaluation query);
+
+    List<JobEvaluation> listEvaluationsAboutMe(Long studentId, JobEvaluation query);
+
     StudentInfo getMyInfo(Long studentId);
 
     int saveMyInfo(Long studentId, StudentInfo info);

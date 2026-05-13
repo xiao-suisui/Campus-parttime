@@ -1,7 +1,8 @@
 <template>
   <view class="container">
     <view class="example">
-      <uni-forms ref="form" :model="user" labelWidth="80px">
+      <view class="section-title">账号信息</view>
+      <uni-forms ref="userForm" :model="user" labelWidth="80px">
         <uni-forms-item label="用户昵称" name="nickName">
           <uni-easyinput v-model="user.nickName" placeholder="请输入昵称" />
         </uni-forms-item>
@@ -15,14 +16,37 @@
           <uni-data-checkbox v-model="user.sex" :localdata="sexs" />
         </uni-forms-item>
       </uni-forms>
+
+      <view class="section-title">学生信息</view>
+      <uni-forms ref="studentForm" :model="student" labelWidth="80px">
+        <uni-forms-item label="姓名" name="realName">
+          <uni-easyinput v-model="student.realName" placeholder="请输入真实姓名" />
+        </uni-forms-item>
+        <uni-forms-item label="学号" name="studentNo">
+          <uni-easyinput v-model="student.studentNo" placeholder="请输入学号" />
+        </uni-forms-item>
+        <uni-forms-item label="学校" name="schoolName">
+          <uni-easyinput v-model="student.schoolName" placeholder="请输入学校名称" />
+        </uni-forms-item>
+        <uni-forms-item label="专业" name="majorName">
+          <uni-easyinput v-model="student.majorName" placeholder="请输入专业名称" />
+        </uni-forms-item>
+        <uni-forms-item label="年级" name="gradeYear">
+          <uni-number-box v-model="student.gradeYear" :min="2020" :max="2030" />
+        </uni-forms-item>
+        <uni-forms-item label="联系电话" name="phone">
+          <uni-easyinput v-model="student.phone" placeholder="请输入联系电话" />
+        </uni-forms-item>
+      </uni-forms>
+
       <button type="primary" @click="submit">提交</button>
     </view>
   </view>
 </template>
 
 <script>
-  import { getUserProfile } from "@/api/system/user"
-  import { updateUserProfile } from "@/api/system/user"
+  import { getUserProfile, updateUserProfile } from "@/api/system/user"
+  import { getStudentInfo, addStudentInfo, updateStudentInfo } from "@/api/student/info"
 
   export default {
     data() {
@@ -32,6 +56,16 @@
           phonenumber: "",
           email: "",
           sex: ""
+        },
+        student: {
+          studentId: "",
+          studentNo: "",
+          realName: "",
+          gender: "0",
+          schoolName: "",
+          majorName: "",
+          gradeYear: 2024,
+          phone: ""
         },
         sexs: [{
           text: '男',
@@ -70,9 +104,10 @@
     },
     onLoad() {
       this.getUser()
+      this.getStudent()
     },
     onReady() {
-      this.$refs.form.setRules(this.rules)
+      this.$refs.userForm.setRules(this.rules)
     },
     methods: {
       getUser() {
@@ -80,9 +115,22 @@
           this.user = response.data
         })
       },
-      submit(ref) {
-        this.$refs.form.validate().then(res => {
-          updateUserProfile(this.user).then(response => {
+      getStudent() {
+        getStudentInfo().then(res => {
+          if (res.data) {
+            Object.assign(this.student, res.data)
+          }
+        })
+      },
+      submit() {
+        this.$refs.userForm.validate().then(() => {
+          const tasks = [updateUserProfile(this.user)]
+          if (this.student.studentId) {
+            tasks.push(updateStudentInfo(this.student))
+          } else if (this.student.realName || this.student.schoolName) {
+            tasks.push(addStudentInfo(this.student))
+          }
+          Promise.all(tasks).then(() => {
             this.$modal.msgSuccess("修改成功")
           })
         })
@@ -93,7 +141,7 @@
 
 <style lang="scss" scoped>
   page {
-    background-color: #ffffff;
+    background-color: #f5f5f5;
   }
 
   .example {
@@ -101,20 +149,13 @@
     background-color: #fff;
   }
 
-  .segmented-control {
-    margin-bottom: 15px;
-  }
-
-  .button-group {
-    margin-top: 15px;
-    display: flex;
-    justify-content: space-around;
-  }
-
-  .form-item {
-    display: flex;
-    align-items: center;
-    flex: 1;
+  .section-title {
+    font-size: 28rpx;
+    font-weight: bold;
+    color: #333;
+    padding: 20rpx 0;
+    margin-bottom: 10rpx;
+    border-bottom: 1rpx solid #eee;
   }
 
   .button {

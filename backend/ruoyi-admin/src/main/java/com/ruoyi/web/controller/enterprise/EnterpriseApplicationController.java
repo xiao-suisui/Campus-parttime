@@ -54,6 +54,17 @@ public class EnterpriseApplicationController extends BaseController
     }
 
     /**
+     * 查看投递关联的学生简历
+     */
+    @PreAuthorize("@ss.hasPermi('enterprise:application:query')")
+    @GetMapping("/{applicationId}/resume")
+    public AjaxResult getResume(@PathVariable Long applicationId)
+    {
+        Long enterpriseId = SecurityUtils.getUserId();
+        return success(enterpriseFlowService.getApplicationResume(enterpriseId, applicationId));
+    }
+
+    /**
      * 录用
      */
     @PreAuthorize("@ss.hasPermi('enterprise:application:hire')")
